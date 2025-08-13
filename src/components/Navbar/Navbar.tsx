@@ -2,18 +2,68 @@
 import { useState } from "react";
 import logo from "../../assets/cake.webp"
 import { PiShoppingCartSimpleDuotone } from "react-icons/pi";
+import {motion} from "framer-motion";
+
+const SlideDown = (delay: number) => {
+  return{
+    initial:{
+      y: "-100",
+      opacity:0,
+    },
+    animate:{
+      y: 0,
+      opacity:1,
+      transition:{
+        delay:delay,
+        duration:0.6,
+        
+      },
+    }
+  }
+}
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const NavbarMenu = [
+    {
+      id: 1,
+      title: "Home",
+      path: "/",
+      delay: 0.1,
+    },
+    {
+      id: 2,
+      title: "About",
+      path: "about",
+      delay: 0.2,
+    },
+    {
+      id: 3,
+      title: "Home",
+      path: "menu",
+      delay: 0.3,
+    },
+    {
+      id: 4,
+      title: "Contact Us",
+      path: "/",
+      delay: 0.4,
+    },
+  ];
+
   return (
-    <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <nav className="bg-lime-200 poppins dark:bg-gray-900 font- fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo */}
-        <a
+        <motion.a
+        initial={{opacity:0}}
+          animate={{opacity:1}}
+          transition={{duration:0.8, delay:0.5}}
           href=""
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img
+          
             src={logo}
             className="h-8"
             alt="Cupcake Logo"
@@ -21,16 +71,22 @@ export default function Navbar() {
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             Cup Cake
           </span>
-        </a>
+        </motion.a>
 
         {/* Right Buttons */}
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button
+          <motion.div
+          variants={SlideDown(1)}
+              initial="initial"
+              animate="animate"
+>
+            <button
             type="button"
             className="text-white bg-gray-600 p-2 rounded-full hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
           >
            <PiShoppingCartSimpleDuotone />
           </button>
+          </motion.div>
 
           {/* Mobile Menu Toggle */}
           <button
@@ -69,9 +125,29 @@ export default function Navbar() {
           id="navbar-sticky"
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg 
-          bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 
-          md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
+           md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 
+           dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            {NavbarMenu.map((item) => (
+              <motion.li 
+              variants={SlideDown(item.delay)}
+              initial="initial"
+              animate="animate"
+              key={item.id} data-delay={item.delay}>
+                
+                <a
+                  href={item.path}
+                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 
+                  md:hover:bg-transparent md:hover:text-blue-700 md:p-0 
+                  dark:text-white dark:hover:bg-gray-700 dark:hover:text-white 
+                  md:dark:hover:bg-transparent dark:border-gray-700"
+                >
+                  {item.title}
+                </a>
+              </motion.li>
+            ))}
+
+            {/* Uncomment below if you want to add more links */}
+            {/* <li>
               <a
                 href="#"
                 className="block py-2 px-3 text-white bg-blue-700 rounded-sm 
@@ -113,7 +189,7 @@ export default function Navbar() {
               >
                 Login
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
