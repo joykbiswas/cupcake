@@ -52,8 +52,8 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-lime-200 poppins dark:bg-gray-900 font- fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-[#3d1816b3] poppins dark:bg-gray-900 font- fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+      <div className="max-w-screen-2xl mx-auto  flex flex-wrap items-center justify-between px-12 py-4">
         {/* Logo */}
         <motion.a
         initial={{opacity:0}}
@@ -68,7 +68,7 @@ export default function Navbar() {
             className="h-8"
             alt="Cupcake Logo"
           />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
             Cup Cake
           </span>
         </motion.a>
@@ -124,7 +124,7 @@ export default function Navbar() {
           } w-full md:flex md:w-auto md:order-1`}
           id="navbar-sticky"
         >
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg 
+          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium text-white border border-gray-100 rounded-lg 
            md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 
            dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             {NavbarMenu.map((item) => (
@@ -136,8 +136,8 @@ export default function Navbar() {
                 
                 <a
                   href={item.path}
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 
-                  md:hover:bg-transparent md:hover:text-blue-700 md:p-0 
+                  className="block py-2 px-3 font-bold text-white rounded-sm hover:bg-gray-100 
+                  md:hover:bg-transparent md:hover:text-pink-200 md:p-0 
                   dark:text-white dark:hover:bg-gray-700 dark:hover:text-white 
                   md:dark:hover:bg-transparent dark:border-gray-700"
                 >
@@ -146,50 +146,6 @@ export default function Navbar() {
               </motion.li>
             ))}
 
-            {/* Uncomment below if you want to add more links */}
-            {/* <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-white bg-blue-700 rounded-sm 
-                md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
-                aria-current="page"
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 
-                md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 
-                dark:text-white dark:hover:bg-gray-700 dark:hover:text-white 
-                md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                About
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 
-                md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 
-                dark:text-white dark:hover:bg-gray-700 dark:hover:text-white 
-                md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                All Products
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 
-                md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 
-                dark:text-white dark:hover:bg-gray-700 dark:hover:text-white 
-                md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Login
-              </a>
-            </li> */}
           </ul>
         </div>
       </div>
