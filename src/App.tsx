@@ -4,6 +4,7 @@ import Footer from "./components/Footer/Footer";
 import Hero from "./components/Hero/Hero";
 import Menu from "./components/Menu/Menu";
 import Navbar from "./components/Navbar/Navbar";
+import ProductPage from "./pages/ProductPage";
 // import HomePage from "./pages/homePage/homePage";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Menu />
       </div>
       <Banner />
+      <ProductPage />
       <Footer />
 
 {/*    <HomePage /> */}

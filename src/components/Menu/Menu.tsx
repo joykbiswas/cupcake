@@ -4,6 +4,7 @@ import Food2 from "../../assets/cake3.png";
 import Food3 from "../../assets/cake4.png";
 import { motion } from 'framer-motion';
 import { SlideUp } from '../Hero/Hero';
+import { COLORS, COLOR_COMBINATIONS } from '../../constants/colors';
 
 
 const MenuData = [
@@ -32,7 +33,12 @@ const MenuData = [
 
 const Menu = () => {
     return (
-        <section className="bg-orange-200">
+        <section className="bg-orange-300"
+        style={{
+            backgroundColor: COLOR_COMBINATIONS.CARD.background,
+            borderColor: COLOR_COMBINATIONS.CARD.border,
+            boxShadow: `0 20px 25px -5px ${COLOR_COMBINATIONS.CARD.shadow}`,
+          }}>
             <div className='max-w-screen-2xl mx-auto p-12 py-12'>
                 <motion.h3 
                 variants={SlideUp(0)}
