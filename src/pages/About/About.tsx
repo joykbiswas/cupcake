@@ -1,5 +1,5 @@
 import React from 'react';
-import { Hero, Story, Stats, Values, Team, Testimonials, Contact } from './components';
+import { Hero, Story, Stats, Values, Team, Testimonials, Contact } from './aboutComponents';
 
 const AboutPage: React.FC = () => {
   return (

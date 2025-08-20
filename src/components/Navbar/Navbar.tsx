@@ -45,9 +45,9 @@ export default function Navbar() {
     },
     {
       id: 4,
-      title: "Contact Us",
-      path: "/",
-      delay: 0.4,
+      title: "Dashboard",
+      path: "/dashboard/adminHome",
+      delay: 0.7,
     },
   ];
 

@@ -6,6 +6,8 @@ import Main from "../Layout/Main/Main";
 import HomePage from "../pages/homePage/homePage";
 import About from "../pages/About/About";
 import AllProductPage from "../pages/AllProduct/AllProduct";
+import Dashboard from "../Layout/Dashboard/Dashboard";
+import AdminHome from "../pages/Dashboard/adminHome/AdminHome";
 
   export const router = createBrowserRouter([
     {
@@ -28,15 +30,15 @@ import AllProductPage from "../pages/AllProduct/AllProduct";
         
       ]
     },
-    // {
-    //   path: '/dashboard',
-    //   element:<PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
-    //   children:[
-    //     // normal user routes
-    //     {
-    //       path:'userHome',
-    //       element:<UserHome></UserHome>
-    //     },
+    {
+      path: '/dashboard',
+      element: <Dashboard />,
+      children:[
+        // normal user routes
+        // {
+        //   path:'userHome',
+        //   element:<UserHome></UserHome>
+        // },
     //     {
     //       path:'cart',
     //       element:<Cart></Cart>
@@ -52,16 +54,16 @@ import AllProductPage from "../pages/AllProduct/AllProduct";
 
 
     //     // admin router
-    //     {
-    //       path: 'adminHome',
-    //       element: <AdminRoute><AdminHome></AdminHome></AdminRoute>
-    //     },
+        {
+          path: 'adminHome',
+          element: <AdminHome />
+        },
     //     {
     //       path:'addItems',
     //       element:<AdminRoute><AddItems></AddItems></AdminRoute>
     //     },
         
-    //   ]
-    // }
+      ]
+    }
     
   ]);
