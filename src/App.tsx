@@ -5,11 +5,16 @@ import Hero from "./components/Hero/Hero";
 import Menu from "./components/Menu/Menu";
 import Navbar from "./components/Navbar/Navbar";
 import ProductPage from "./pages/ProductPage";
+import { GRADIENTS } from "./constants/colors";
+// import Login from "./pages/login/login";
 // import HomePage from "./pages/homePage/homePage";
 
 function App() {
   return (
-    <div className='overflow-x-hidden bg-[#d9ded4] text-dark'>
+    <div 
+      className='overflow-x-hidden text-dark'
+      style={{ background: GRADIENTS.PAGE_BACKGROUND }}
+    >
       <div className='relative overflow-hidden'>
 
       <Navbar />
@@ -18,6 +23,8 @@ function App() {
       </div>
       <Banner />
       <ProductPage />
+
+      {/* <Login /> */}
       <Footer />
 
 {/*    <HomePage /> */}

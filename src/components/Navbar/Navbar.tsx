@@ -33,15 +33,15 @@ export default function Navbar() {
     },
     {
       id: 2,
-      title: "About",
-      path: "about",
-      delay: 0.2,
+      title: "All Product",
+      path: "all-product",
+      delay: 0.3,
     },
     {
       id: 3,
-      title: "Home",
-      path: "menu",
-      delay: 0.3,
+      title: "About",
+      path: "about",
+      delay: 0.5,
     },
     {
       id: 4,

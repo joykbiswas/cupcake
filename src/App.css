@@ -40,3 +40,199 @@
 .read-the-docs {
   color: #888;
 } */
+
+/* Vibrant and Professional Gradient Background Classes */
+.gradient-page-bg {
+  background: linear-gradient(135deg, #FFE5E5 0%, #FFF0E5 25%, #E5F0FF 50%, #F0E5FF 75%, #FFE5F0 100%);
+}
+
+.gradient-page-bg-alt {
+  background: linear-gradient(135deg, #FFD4D4 0%, #FFE8D4 25%, #D4E8FF 50%, #E8D4FF 75%, #FFD4E8 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #45B7D1 75%, #96CEB4 100%);
+}
+
+.gradient-hero-vibrant {
+  background: linear-gradient(135deg, #FF6B9D 0%, #C44569 25%, #F093FB 50%, #F5576C 75%, #4FACFE 100%);
+}
+
+.gradient-hero-sunset {
+  background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 25%, #FECFEF 50%, #FFC3A0 75%, #FFAFBD 100%);
+}
+
+.gradient-card {
+  background: linear-gradient(145deg, #FFFFFF 0%, #F8F9FF 25%, #FFF8F9 50%, #F9FFF8 75%, #FFFFFF 100%);
+}
+
+.gradient-card-colorful {
+  background: linear-gradient(145deg, #FFE5E5 0%, #E5F0FF 25%, #F0E5FF 50%, #E5FFF0 75%, #FFE5E5 100%);
+}
+
+.gradient-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.gradient-button-alt {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-button-alt:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, #FFD93D 0%, #FF6B6B 50%, #4ECDC4 100%);
+}
+
+.gradient-accent-rainbow {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #45B7D1 75%, #96CEB4 100%);
+}
+
+.gradient-accent-sunset {
+  background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 25%, #FECFEF 50%, #FFC3A0 75%, #FFAFBD 100%);
+}
+
+.gradient-modern {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+}
+
+.gradient-trendy {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.gradient-trendy-alt {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.gradient-subtle {
+  background: linear-gradient(180deg, #FFE5E5 0%, #FFF0E5 100%);
+}
+
+.gradient-warm {
+  background: linear-gradient(135deg, #FFE5E5 0%, #FFE8D4 100%);
+}
+
+.gradient-cool {
+  background: linear-gradient(135deg, #E5F0FF 0%, #D4E8FF 100%);
+}
+
+.gradient-menu-section {
+  background: linear-gradient(135deg, #FFE5E5 0%, #FFF0E5 25%, #E5F0FF 50%, #F0E5FF 75%, #FFE5F0 100%);
+}
+
+.gradient-product-section {
+  background: linear-gradient(135deg, #F8F9FF 0%, #FFF8F9 25%, #F9FFF8 50%, #FFF9F8 75%, #F8F9FF 100%);
+}
+
+.gradient-premium {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+}
+
+.gradient-premium-alt {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 25%, #ffecd2 50%, #fcb69f 75%, #a8edea 100%);
+}
+
+/* Gradient Text Classes */
+.gradient-text-hero {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 50%, #4ECDC4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-rainbow {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #45B7D1 75%, #96CEB4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-sunset {
+  background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 25%, #FECFEF 50%, #FFC3A0 75%, #FFAFBD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-modern {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient Border Classes */
+.gradient-border {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%) border-box;
+}
+
+.gradient-border-rainbow {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #45B7D1 75%, #96CEB4 100%) border-box;
+}
+
+.gradient-border-modern {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%) border-box;
+}
+
+.gradient-border-card {
+  border: 1px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(145deg, #FFE5E5 0%, #E5F0FF 100%) border-box;
+}
+
+/* Enhanced Glow and Shimmer Effects */
+.gradient-glow {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.3) 50%, rgba(255, 230, 109, 0.1) 100%);
+}
+
+.gradient-glow-rainbow {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 230, 109, 0.2) 25%, rgba(78, 205, 196, 0.3) 50%, rgba(69, 183, 209, 0.2) 75%, rgba(150, 206, 180, 0.1) 100%);
+}
+
+/* Animation for enhanced shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.gradient-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.gradient-shimmer-rainbow {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 107, 107, 0.3) 25%, rgba(255, 230, 109, 0.5) 50%, rgba(78, 205, 196, 0.3) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Hover effects for interactive elements */
+.gradient-hover-effect:hover {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 25%, #4ECDC4 50%, #45B7D1 75%, #96CEB4 100%);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+.gradient-card-hover:hover {
+  background: linear-gradient(145deg, #FFE5E5 0%, #E5F0FF 25%, #F0E5FF 50%, #E5FFF0 75%, #FFE5E5 100%);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}

@@ -1,8 +1,7 @@
 
 import Logo from "../../assets/cake.webp"
 import { motion } from 'framer-motion'
-
-
+import { GRADIENTS } from "../../constants/colors"
 
 const Footer = () => {
     return (
@@ -11,6 +10,7 @@ const Footer = () => {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
         className='bg-primary rounded-t-3xl'
+        style={{ background: GRADIENTS.PAGE_BACKGROUND }}
         >
             <div className='max-w-screen-2xl mx-auto p-12 py-12'>
                 <div className='grid grid-cols-1 md:grid-cols-3
