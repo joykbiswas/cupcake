@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import Select from "react-select"; // <-- Import React Select
-
+const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const steps = [
   "PRODUCT INFO",
   "MEDIA",
@@ -19,50 +20,66 @@ const categoryOptions = [
   { value: "Other", label: "Other" },
 ];
 
-const sizeOptions = [
-  "Extra Large",
-  "Extra Small",
-  "Large",
-  "Medium",
-  "Small",
-];
+const sizeOptions = ["Extra Large", "Extra Small", "Large", "Medium", "Small"];
 
 const AddItem = () => {
   const [step, setStep] = useState(0);
 
-  // Example form state (expand as needed)
+  // Update FormState type:
   type FormState = {
     name: string;
     description: string;
-    weight: string;
     category: { value: string; label: string }[];
     sizes: string;
-    images: File[];
+    images: string[]; // <-- change to string[]
     price: string;
-    sku: string;
     tags: string[];
   };
 
+  // Update initial state:
   const [form, setForm] = useState<FormState>({
     name: "",
     description: "",
-    weight: "",
     category: [categoryOptions[0]],
     sizes: "Medium",
-    images: [],
+    images: [], // <-- string[]
     price: "",
-    sku: "",
     tags: ["In Stock", "Out of Stock"],
   });
 
+  const [loading, setLoading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+
   // For file upload
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setForm({
-        ...form,
-        images: Array.from(e.target.files),
-      });
-    }
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "cake_upload");
+    data.append("cloud_name", cloudName);
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+
+    const uploadedImage = await res.json();
+    setUploadedImageUrl(uploadedImage.secure_url); // For preview
+    setForm((prev) => ({
+      ...prev,
+      images: [...prev.images, uploadedImage.secure_url], // <-- Save URL in form.images
+    }));
+    console.log("Uploaded Image URL:", uploadedImage.secure_url);
+    console.log(" Image URL:", uploadedImage.url);
+    setLoading(false);
   };
 
   // Stepper UI
@@ -75,7 +92,9 @@ const AddItem = () => {
               <div className="flex flex-col items-center">
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    step >= idx ? "border-white bg-white" : "border-gray-400 bg-gray-700"
+                    step >= idx
+                      ? "border-white bg-white"
+                      : "border-gray-400 bg-gray-700"
                   }`}
                 />
                 <span
@@ -110,26 +129,34 @@ const AddItem = () => {
                   type="text"
                   className="w-full border-b py-2 outline-none"
                   value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium">Weight</label>
-                <input
-                  type="text"
+                <label className="block mb-1 font-medium">Sizes</label>
+                <select
                   className="w-full border-b py-2 outline-none"
-                  value={form.weight}
-                  onChange={e => setForm({ ...form, weight: e.target.value })}
-                />
+                  value={form.sizes}
+                  onChange={(e) => setForm({ ...form, sizes: e.target.value })}
+                >
+                  {sizeOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="md:col-span-2">
                 <label className="block mb-1 font-medium">
-                  Description <span className="text-xs text-gray-400">(optional)</span>
+                  Description{" "}
+                  <span className="text-xs text-gray-400">(optional)</span>
                 </label>
                 <textarea
                   className="w-full border rounded-md p-2 min-h-[80px] outline-none"
                   value={form.description}
-                  onChange={e => setForm({ ...form, description: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
                   placeholder="Some initial bold text"
                 />
               </div>
@@ -139,23 +166,18 @@ const AddItem = () => {
                   isMulti
                   options={categoryOptions}
                   value={form.category}
-                  onChange={selected => setForm({ ...form, category: Array.from(selected as { value: string; label: string }[]) })}
+                  onChange={(selected) =>
+                    setForm({
+                      ...form,
+                      category: Array.from(
+                        selected as { value: string; label: string }[]
+                      ),
+                    })
+                  }
                   className="react-select-container"
                   classNamePrefix="react-select"
                   placeholder="Select categories..."
                 />
-              </div>
-              <div>
-                <label className="block mb-1 font-medium">Sizes</label>
-                <select
-                  className="w-full border-b py-2 outline-none"
-                  value={form.sizes}
-                  onChange={e => setForm({ ...form, sizes: e.target.value })}
-                >
-                  {sizeOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
               </div>
             </div>
             <div className="flex justify-end mt-8">
@@ -177,21 +199,31 @@ const AddItem = () => {
               className="border rounded-md p-8 flex flex-col items-center justify-center min-h-[120px] text-gray-600 cursor-pointer hover:bg-gray-100"
               onClick={() => document.getElementById("image-upload")?.click()}
             >
-              {form.images.length === 0 ? (
-                <span>Drop files here to upload or click to select</span>
-              ) : (
+              {loading ? (
+                <div className="h-10 w-10 animate-[spin_2s_linear_infinite] rounded-full border-8 border-dotted border-sky-600"></div>
+              ) : form.images.length > 0 ? (
                 <div className="flex gap-2 flex-wrap">
-                  {form.images.map((file: File, idx: number) => (
-                    <span key={idx} className="bg-gray-200 px-3 py-1 rounded">
-                      {file.name}
-                    </span>
+                  {form.images.map((url, idx) => (
+                    <img
+                      key={idx}
+                      src={url}
+                      alt={`Cake ${idx}`}
+                      className="max-h-40 rounded shadow"
+                    />
                   ))}
                 </div>
+              ) : uploadedImageUrl ? (
+                <img
+                  src={uploadedImageUrl}
+                  alt="Cake"
+                  className="max-h-40 rounded shadow"
+                />
+              ) : (
+                <span>Drop files here to upload or click to select</span>
               )}
               <input
                 id="image-upload"
                 type="file"
-                multiple
                 accept="image/*"
                 className="hidden"
                 onChange={handleImageUpload}
@@ -217,14 +249,14 @@ const AddItem = () => {
         return (
           <div>
             <h3 className="text-xl font-bold mb-6">Pricing</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-1 font-medium">Price</label>
                 <input
                   type="number"
                   className="w-full border-b py-2 outline-none"
                   value={form.price}
-                  onChange={e => setForm({ ...form, price: e.target.value })}
+                  onChange={(e) => setForm({ ...form, price: e.target.value })}
                 />
               </div>
               <div>
@@ -232,10 +264,8 @@ const AddItem = () => {
                 <select className="w-full border-b py-2 outline-none">
                   <option>BDT</option>
                   <option>USD</option>
-                 
                 </select>
               </div>
-              
             </div>
             <div className="mt-6">
               <label className="block mb-1 font-medium">Tags</label>
@@ -263,7 +293,7 @@ const AddItem = () => {
                   type="text"
                   className="border-b outline-none px-2"
                   placeholder="Add tag"
-                  onKeyDown={e => {
+                  onKeyDown={(e) => {
                     if (e.key === "Enter" && e.currentTarget.value) {
                       setForm({
                         ...form,
@@ -285,8 +315,11 @@ const AddItem = () => {
               <button
                 className="bg-black text-white px-6 py-2 rounded-md"
                 onClick={() => {
-                  console.log("Form Data:", form);
-                  alert("Product submitted!");
+                  console.log("Form Data:", form); 
+                  Swal.fire({
+                    title: "Create Success !",
+                    icon: "success",
+                  });
                 }}
               >
                 Send
@@ -302,7 +335,7 @@ const AddItem = () => {
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-2">
       <h1 className="text-3xl font-bold text-center mb-2">Add new Product</h1>
-      <p className="text-gray-500 text-center mb-8">
+      <p className="text-white text-center mb-8">
         This information will let us know more about you.
       </p>
       <Stepper />
