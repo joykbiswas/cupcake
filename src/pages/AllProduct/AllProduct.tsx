@@ -86,6 +86,7 @@ const AllProductPage: React.FC = () => {
           <p className={`text-gray-600 ${isList ? 'text-sm' : 'text-sm'} mb-3 line-clamp-2`}>{product.description}</p>
 
           <div className="flex flex-wrap gap-1 mb-3">
+
             {Array.isArray(product.tags) && product.tags.slice(0, 3).map((tag: any) => (
               <span key={String(tag)} className="bg-[#F5F1E8] text-[#7C5228] text-xs px-2 py-1 rounded-full border border-[#E8E0D0]">
                 {String(tag)}

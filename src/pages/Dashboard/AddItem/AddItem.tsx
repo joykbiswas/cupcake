@@ -42,10 +42,51 @@ const AddItem = () => {
     description: "",
     category: [categoryOptions[0]],
     sizes: "Medium",
-    images: [], // <-- string[]
+    images: [],
     price: "",
     tags: ["In Stock", "Out of Stock"],
   });
+
+  const handleAddCake = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    const payload = {
+    ...form,
+    category: form.category.map(cat => cat.value),
+  };
+ 
+    try {
+      const response = await fetch('http://localhost:5000/cake', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+    console.log("response data:", data);
+
+      if (data.insertedId) {
+        Swal.fire({
+          title: "Create Success!",
+          icon: "success",
+        });
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to create product.",
+          icon: "error",
+        });
+      }
+    } catch {
+      Swal.fire({
+        title: "Error!",
+        text: "Network error.",
+        icon: "error",
+      });
+    }
+  };
+
 
   const [loading, setLoading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
@@ -314,12 +355,9 @@ const AddItem = () => {
               </button>
               <button
                 className="bg-black text-white px-6 py-2 rounded-md"
-                onClick={() => {
-                  console.log("Form Data:", form); 
-                  Swal.fire({
-                    title: "Create Success !",
-                    icon: "success",
-                  });
+                onClick={(e) => {
+                  handleAddCake(e);
+                  // console.log("Form Data:", form); 
                 }}
               >
                 Send

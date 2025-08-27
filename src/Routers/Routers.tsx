@@ -9,6 +9,7 @@ import AllProductPage from "../pages/AllProduct/AllProduct";
 import Dashboard from "../Layout/Dashboard/Dashboard";
 import AdminHome from "../pages/Dashboard/adminHome/AdminHome";
 import AddItem from "../pages/Dashboard/AddItem/AddItem";
+import AllItems from "../pages/Dashboard/AllItems/AllItems";
 
   export const router = createBrowserRouter([
     {
@@ -62,6 +63,11 @@ import AddItem from "../pages/Dashboard/AddItem/AddItem";
         {
           path: 'products/create',
           element: <AddItem />
+        },
+        {
+          path: 'products/all',
+          element: <AllItems />,
+          loader: () => fetch('http://localhost:5000/cake')
         },
     //     {
     //       path:'addItems',
