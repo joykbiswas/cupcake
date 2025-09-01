@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import Select from "react-select"; // <-- Import React Select
+import Select from "react-select";
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
 const steps = [
   "PRODUCT INFO",
   "MEDIA",
-  // "SOCIALS",
   "PRICING",
 ];
 
@@ -20,76 +20,51 @@ const categoryOptions = [
   { value: "Other", label: "Other" },
 ];
 
+const tagOptions = [
+  { value: "peach", label: "peach" },
+  { value: "cobbler", label: "cobbler" },
+  { value: "chocolate chip", label: "chocolate chip" },
+  { value: "orange", label: "orange" },
+  { value: "Fruit", label: "Fruit" },
+  { value: "vanilla", label: "vanilla" },
+  { value: "creamy", label: "creamy" },
+  { value: "classic", label: "classic" },
+  { value: "lemon", label: "lemon" },
+  { value: "citrus", label: "citrus" },
+  { value: "strawberry", label: "strawberry" },
+  { value: "cheesecake", label: "cheesecake" },
+  { value: "red velvet", label: "red velvet" },
+  { value: "zesty", label: "zesty" },
+];
+
 const sizeOptions = ["Extra Large", "Extra Small", "Large", "Medium", "Small"];
+
+type FormState = {
+  name: string;
+  description: string;
+  category: { value: string; label: string } | null;
+  sizes: string;
+  images: string[]; // Only one image URL
+  price: number | "";
+  tags: { value: string; label: string }[];
+  inStock: boolean;
+};
 
 const AddItem = () => {
   const [step, setStep] = useState(0);
 
-  // Update FormState type:
-  type FormState = {
-    name: string;
-    description: string;
-    category: { value: string; label: string }[];
-    sizes: string;
-    images: string[]; // <-- change to string[]
-    price: string;
-    tags: string[];
-  };
-
-  // Update initial state:
   const [form, setForm] = useState<FormState>({
     name: "",
     description: "",
-    category: [categoryOptions[0]],
+    category: null,
     sizes: "Medium",
     images: [],
     price: "",
-    tags: ["In Stock", "Out of Stock"],
+    tags: [],
+    inStock: true,
   });
 
-  const handleAddCake = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    const payload = {
-    ...form,
-    category: form.category.map(cat => cat.value),
-  };
- 
-    try {
-      const response = await fetch('http://localhost:5000/cake', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
-    console.log("response data:", data);
-
-      if (data.insertedId) {
-        Swal.fire({
-          title: "Create Success!",
-          icon: "success",
-        });
-      } else {
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to create product.",
-          icon: "error",
-        });
-      }
-    } catch {
-      Swal.fire({
-        title: "Error!",
-        text: "Network error.",
-        icon: "error",
-      });
-    }
-  };
-
-
   const [loading, setLoading] = useState(false);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
   // For file upload
   const handleImageUpload = async (
@@ -113,17 +88,57 @@ const AddItem = () => {
     );
 
     const uploadedImage = await res.json();
-    setUploadedImageUrl(uploadedImage.secure_url); // For preview
     setForm((prev) => ({
       ...prev,
-      images: [...prev.images, uploadedImage.secure_url], // <-- Save URL in form.images
+      images: [uploadedImage.secure_url], // Only one image URL
     }));
-    console.log("Uploaded Image URL:", uploadedImage.secure_url);
-    console.log(" Image URL:", uploadedImage.url);
     setLoading(false);
   };
 
-  // Stepper UI
+  const handleAddCake = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    const payload = {
+      ...form,
+      category: form.category ? form.category.value : "",
+      tags: form.tags.map((tag) => tag.value),
+      images: form.images[0] || "", // <-- send as string, not array
+      inStock: form.inStock,
+    };
+    console.log("payload", payload);
+
+    try {
+      const response = await fetch("http://localhost:5000/cake", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      console.log("response data:", data);
+
+      if (data.insertedId) {
+        Swal.fire({
+          title: "Create Success!",
+          icon: "success",
+        });
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to create product.",
+          icon: "error",
+        });
+      }
+    } catch {
+      Swal.fire({
+        title: "Error!",
+        text: "Network error.",
+        icon: "error",
+      });
+    }
+  };
+
   const Stepper = () => (
     <div className="w-full flex justify-center mb-8">
       <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl shadow-lg w-full max-w-4xl px-8 py-4 flex flex-col">
@@ -156,7 +171,6 @@ const AddItem = () => {
     </div>
   );
 
-  // Step content
   const renderStep = () => {
     switch (step) {
       case 0:
@@ -201,24 +215,46 @@ const AddItem = () => {
                   placeholder="Some initial bold text"
                 />
               </div>
-              <div>
-                <label className="block mb-1 font-medium">Category</label>
-                <Select
-                  isMulti
-                  options={categoryOptions}
-                  value={form.category}
-                  onChange={(selected) =>
-                    setForm({
-                      ...form,
-                      category: Array.from(
-                        selected as { value: string; label: string }[]
-                      ),
-                    })
-                  }
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  placeholder="Select categories..."
-                />
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block mb-1 font-medium">Category</label>
+                  <Select
+                    options={categoryOptions}
+                    value={form.category}
+                    onChange={(selected) =>
+                      setForm({
+                        ...form,
+                        category: selected as {
+                          value: string;
+                          label: string;
+                        } | null,
+                      })
+                    }
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    placeholder="Select category..."
+                    isMulti={false}
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 font-medium">Tags</label>
+                  <Select
+                    isMulti
+                    options={tagOptions}
+                    value={form.tags}
+                    onChange={(selected) =>
+                      setForm({
+                        ...form,
+                        tags: Array.from(
+                          selected as { value: string; label: string }[]
+                        ),
+                      })
+                    }
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    placeholder="Select Tags..."
+                  />
+                </div>
               </div>
             </div>
             <div className="flex justify-end mt-8">
@@ -243,22 +279,24 @@ const AddItem = () => {
               {loading ? (
                 <div className="h-10 w-10 animate-[spin_2s_linear_infinite] rounded-full border-8 border-dotted border-sky-600"></div>
               ) : form.images.length > 0 ? (
-                <div className="flex gap-2 flex-wrap">
-                  {form.images.map((url, idx) => (
-                    <img
-                      key={idx}
-                      src={url}
-                      alt={`Cake ${idx}`}
-                      className="max-h-40 rounded shadow"
-                    />
-                  ))}
+                <div className="relative">
+                  <img
+                    src={form.images[0]}
+                    alt="Cake"
+                    className="max-h-40 rounded shadow"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white transition"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setForm((prev) => ({ ...prev, images: [] }));
+                    }}
+                    title="Remove image"
+                  >
+                    &times;
+                  </button>
                 </div>
-              ) : uploadedImageUrl ? (
-                <img
-                  src={uploadedImageUrl}
-                  alt="Cake"
-                  className="max-h-40 rounded shadow"
-                />
               ) : (
                 <span>Drop files here to upload or click to select</span>
               )}
@@ -297,7 +335,13 @@ const AddItem = () => {
                   type="number"
                   className="w-full border-b py-2 outline-none"
                   value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      price:
+                        e.target.value === "" ? "" : Number(e.target.value),
+                    })
+                  }
                 />
               </div>
               <div>
@@ -308,42 +352,25 @@ const AddItem = () => {
                 </select>
               </div>
             </div>
-            <div className="mt-6">
-              <label className="block mb-1 font-medium">Tags</label>
-              <div className="flex gap-2 flex-wrap">
-                {form.tags.map((tag, idx) => (
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block mb-1 font-medium">In Stock</label>
+                <button
+                  type="button"
+                  className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none ${
+                    form.inStock ? "bg-black" : "bg-gray-300"
+                  }`}
+                  onClick={() => setForm({ ...form, inStock: !form.inStock })}
+                >
                   <span
-                    key={tag}
-                    className="bg-black text-white px-3 py-1 rounded-full flex items-center gap-1"
-                  >
-                    {tag}
-                    <button
-                      className="ml-1 text-xs"
-                      onClick={() =>
-                        setForm({
-                          ...form,
-                          tags: form.tags.filter((_, i) => i !== idx),
-                        })
-                      }
-                    >
-                      ×
-                    </button>
+                    className={`inline-block h-7 w-7 transform rounded-full bg-white shadow transition-transform ${
+                      form.inStock ? "translate-x-8" : "translate-x-1"
+                    }`}
+                  />
+                  <span className="absolute left-2 text-xs font-semibold text-gray-300 select-none">
+                    {form.inStock ? "Yes" : "No"}
                   </span>
-                ))}
-                <input
-                  type="text"
-                  className="border-b outline-none px-2"
-                  placeholder="Add tag"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.currentTarget.value) {
-                      setForm({
-                        ...form,
-                        tags: [...form.tags, e.currentTarget.value],
-                      });
-                      e.currentTarget.value = "";
-                    }
-                  }}
-                />
+                </button>
               </div>
             </div>
             <div className="flex justify-between mt-8">
@@ -355,10 +382,7 @@ const AddItem = () => {
               </button>
               <button
                 className="bg-black text-white px-6 py-2 rounded-md"
-                onClick={(e) => {
-                  handleAddCake(e);
-                  // console.log("Form Data:", form); 
-                }}
+                onClick={handleAddCake}
               >
                 Send
               </button>
