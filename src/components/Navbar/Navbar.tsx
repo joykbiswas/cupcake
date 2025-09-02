@@ -50,9 +50,8 @@ export default function Navbar() {
   ];
 
   const ProfileMenu = [
-    { id: 5, title: "Profile", path: "#", delay: 0.9 },
-    { id: 6, title: "Settings", path: "#", delay: 1.1 },
-    { id: 7, title: "Logout", path: "#", delay: 1.3 },
+    { id: 15, title: "Profile", path: "#", delay: 0.9 },
+    { id: 17, title: "Login", path: "/login", delay: 1.3 },
   ];
 
   return (
@@ -139,14 +138,13 @@ export default function Navbar() {
                 <li>
                   <a className="justify-between">
                     Profile
-                    <span className="badge">New</span>
                   </a>
                 </li>
                 <li>
-                  <a>Settings</a>
+                  <a href="/login">Login</a>
                 </li>
                 <li>
-                  <a>Logout</a>
+                  <a href="/signup">Signup</a>
                 </li>
               </ul>
             </div>
