@@ -10,7 +10,7 @@ import Dashboard from "../Layout/Dashboard/Dashboard";
 import AdminHome from "../pages/Dashboard/adminHome/AdminHome";
 import AddItem from "../pages/Dashboard/AddItem/AddItem";
 import AllItems from "../pages/Dashboard/AllItems/AllItems";
-import Login from "../pages/login/login";
+// import Login from "../pages/login/login";
 import SignUp from "../pages/signUp/SignUp";
 
   export const router = createBrowserRouter([
@@ -30,10 +30,10 @@ import SignUp from "../pages/signUp/SignUp";
             path:'/all-product',
             element:<AllProductPage />
         },
-       {
-          path:'/login',
-          element:<Login />
-        },
+      //  {
+      //     path:'/login',
+      //     element:<Login />
+      //   },
         {
           path:'/signup',
           element:<SignUp />

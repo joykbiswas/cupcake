@@ -5,9 +5,13 @@ import Menu from "../../components/Menu/Menu";
 import Navbar from "../../components/Navbar/Navbar";
 import ProductPage from "../../pages/ProductPage";
 import { GRADIENTS } from "../../constants/colors";
+import useAuth from "../../hooks/useAuth";
 
 
 const HomePage = () => {
+    const auth = useAuth();
+    const user = auth?.user;
+    console.log('user', user);
     return (
         <div
             className='overflow-x-hidden text-dark'
@@ -20,6 +24,7 @@ const HomePage = () => {
             </div>
             <Banner />
             <ProductPage />
+
 
             {/* <Login /> */}
             {/* <Footer /> */}
