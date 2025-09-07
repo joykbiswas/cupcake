@@ -23,11 +23,11 @@ const AllProductPage: React.FC = () => {
 
   // Filter and search logic
   const filteredProducts = useMemo<Cake[]>(() => {
-    let filtered = products.filter((product) => {
+    const filtered = products.filter((product) => {
       // Search filter
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (Array.isArray(product.tags) && product.tags.some((tag: any) => String(tag).toLowerCase().includes(searchTerm.toLowerCase())));
+        (Array.isArray(product.tags) && product.tags.some((tag: string) => String(tag).toLowerCase().includes(searchTerm.toLowerCase())));
 
       // Category filter
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
@@ -87,7 +87,7 @@ const AllProductPage: React.FC = () => {
 
           <div className="flex flex-wrap gap-1 mb-3">
 
-            {Array.isArray(product.tags) && product.tags.slice(0, 3).map((tag: any) => (
+            {Array.isArray(product.tags) && product.tags.slice(0, 3).map((tag: string) => (
               <span key={String(tag)} className="bg-[#F5F1E8] text-[#7C5228] text-xs px-2 py-1 rounded-full border border-[#E8E0D0]">
                 {String(tag)}
               </span>

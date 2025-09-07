@@ -1,23 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { User } from "firebase/auth";
-
 import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
-// @ts-ignore
+// @ts-expect-error: Firebase config file is not a module
 import { app } from "../Firebase/firebase.config.js";
 import useAxiosPublic from "../hooks/useAxiosPublic";
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  createUser: (email: string, password: string) => Promise<any>;
-  signIn: (email: string, password: string) => Promise<any>;
-  logOut: () => Promise<void>;
-  updateUserprofile: (name: string, photo: string) => Promise<void>;
-  googleSignIn: () => Promise<any>;
-}
-
-export const AuthContext = createContext<AuthContextType | null>(null);
+import { AuthContext } from "./context/AuthContext.js";
 const auth = getAuth(app);
 
 interface AuthProviderProps {
@@ -53,31 +41,32 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         return updateProfile(auth.currentUser, {
             displayName: name, 
             photoURL: photo
+        }).then(() => {
+            // update user state as well to reflect changes immediately
+            setUser(auth.currentUser);
         });
     }
-    return Promise.reject(new Error('No user is currently signed in'));
+    return Promise.reject(new Error("No user is currently signed in"));
    }
     useEffect(() =>{
-    const unsubscribe = onAuthStateChanged(auth, currentUser =>{
+    const unsubscribe = onAuthStateChanged(auth, async currentUser =>{
         setUser(currentUser);
         console.log('current user', currentUser);
         if(currentUser){
             //get token and store client
             const userInfo = {email: currentUser.email}
-            axiosPublic.post('/jwt', userInfo)
-            .then(res=>{
+            try {
+                const res = await axiosPublic.post('/jwt', userInfo);
                 if(res.data?.token){
                     localStorage.setItem('access-token', res.data.token);
                 } else {
                     console.warn('JWT endpoint did not return token');
                 }
-            })
-            .catch(err =>{
+            } catch (err) {
                 console.error('JWT request failed', err?.response?.data || err?.message || err);
-            })
-            .finally(()=>{
+            } finally {
                 setLoading(false);
-            })
+            }
 
         }
         else{
@@ -93,7 +82,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
    },[axiosPublic])
 
-    const authInfo: AuthContextType = {
+    const authInfo = {
         user,
         loading,
         createUser,

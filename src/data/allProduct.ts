@@ -7,7 +7,7 @@ export interface Cake {
     image: string;
     inStock: boolean
     description: string;
-    tags: any
+    tags: string[]
   }
 
 // Mock JSON data for cakes

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
+import { useLoaderData, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import Select from "react-select";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
-const steps = [
-  "PRODUCT INFO",
-  "MEDIA",
-  "PRICING",
-];
+const steps = ["PRODUCT INFO", "MEDIA", "PRICING"];
 
 const categoryOptions = [
   { value: "Birthday Cake", label: "Birthday Cake" },
@@ -43,6 +42,18 @@ const tagOptions = [
 
 const sizeOptions = ["Extra Large", "Extra Small", "Large", "Medium", "Small"];
 
+interface Cake {
+  _id: string;
+  name: string;
+  description: string;
+  images: string;
+  price: string;
+  sizes: string;
+  tags: string[];
+  category: string;
+  inStock: boolean;
+}
+
 type FormState = {
   name: string;
   description: string;
@@ -54,21 +65,25 @@ type FormState = {
   inStock: boolean;
 };
 
-const AddItem = () => {
+const EditItem = () => {
+  const { id } = useParams<{ id: string }>();
+  const cake = useLoaderData() as Cake;
+
+  const axiosSecure = useAxiosSecure();
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState<FormState>({
-    name: "",
-    description: "",
-    category: null,
-    sizes: "Medium",
-    images: [],
-    price: "",
-    tags: [],
-    inStock: true,
-  });
   const [loading, setLoading] = useState(false);
 
-  // For file upload
+  const [form, setForm] = useState<FormState>({
+    name: cake.name || "",
+    description: cake.description || "",
+    category: categoryOptions.find((option) => option.value === cake.category) || null,
+    sizes: cake.sizes || "Medium",
+    images: cake.images ? [cake.images] : [],
+    price: cake.price ? Number(cake.price) : "",
+    tags: cake.tags.map((tag) => ({ value: tag, label: tag })) || [],
+    inStock: cake.inStock || true,
+  });
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -81,23 +96,31 @@ const AddItem = () => {
     data.append("upload_preset", "cake_upload");
     data.append("cloud_name", cloudName);
 
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: "POST",
-        body: data,
-      }
-    );
-
-    const uploadedImage = await res.json();
-    setForm((prev) => ({
-      ...prev,
-      images: [uploadedImage.secure_url],
-    }));
-    setLoading(false);
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const uploadedImage = await res.json();
+      setForm((prev) => ({
+        ...prev,
+        images: [uploadedImage.secure_url],
+      }));
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to upload image.",
+        icon: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddCake = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleUpdateCake = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     const payload = {
@@ -107,40 +130,21 @@ const AddItem = () => {
       images: form.images[0] || "",
       inStock: form.inStock,
     };
-    console.log("payload", payload);
 
     try {
-      const response = await fetch("http://localhost:5000/cake", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
-      console.log("response data:", data);
+        const response = await axiosSecure.patch(`/cake/${id}`, payload);
+        const data = response.data;
+        console.log(data);
 
-      if (data.insertedId) {
+      if (data.modifiedCount > 0) {
         Swal.fire({
-          title: "Create Success!",
+          title: "Update Success!",
           icon: "success",
         });
-        // Reset form and go back to step 0
-        setForm({
-          name: "",
-          description: "",
-          category: null,
-          sizes: "Medium",
-          images: [],
-          price: "",
-          tags: [],
-          inStock: true,
-        });
-        setStep(0);
       } else {
         Swal.fire({
           title: "Error!",
-          text: "Failed to create product.",
+          text: "No changes made or update failed.",
           icon: "error",
         });
       }
@@ -396,9 +400,9 @@ const AddItem = () => {
               </button>
               <button
                 className="bg-black text-white px-6 py-2 rounded-md"
-                onClick={handleAddCake}
+                onClick={handleUpdateCake}
               >
-                Send
+                Save Changes
               </button>
             </div>
           </div>
@@ -410,16 +414,16 @@ const AddItem = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-2">
-      <h1 className="text-3xl font-bold text-center mb-2">Add new Product</h1>
+      <h1 className="text-3xl font-bold text-center mb-2">Edit Product</h1>
       <p className="text-white text-center mb-8">
-        This information will let us know more about you.
+        Editing product with ID: {id}
       </p>
       <Stepper />
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-4xl">
-        {renderStep()}
+        {cake ? renderStep() : <p>Loading...</p>}
       </div>
     </div>
   );
 };
 
-export default AddItem;
+export default EditItem;

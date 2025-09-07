@@ -12,6 +12,7 @@ import AddItem from "../pages/Dashboard/AddItem/AddItem";
 import AllItems from "../pages/Dashboard/AllItems/AllItems";
 // import Login from "../pages/login/login";
 import SignUp from "../pages/signUp/SignUp";
+import EditItem from "../pages/Dashboard/EditItem/EditItem";
 
   export const router = createBrowserRouter([
     {
@@ -72,6 +73,11 @@ import SignUp from "../pages/signUp/SignUp";
         {
           path: 'products/create',
           element: <AddItem />
+        },
+        {
+          path: 'products/edit/:id',
+          element: <EditItem />,
+          loader: ({params}) => fetch(`http://localhost:5000/cake/${params.id}`)
         },
         {
           path: 'products/all',

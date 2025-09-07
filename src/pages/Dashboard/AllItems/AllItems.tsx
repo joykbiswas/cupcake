@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
+import useMenu from "../../../hooks/useMenu";
 
 // Define TypeScript interfaces
-
 interface Cake {
   _id: string;
   name: string;
@@ -16,39 +18,31 @@ interface Cake {
 }
 
 const AllItems = () => {
-  const cakes = useLoaderData() as Cake[];
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
+  const [currentItems, loading, refetch] = useMenu();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
-  console.log("cakes", cakes);
   // Filter data based on search term
   const filteredData = useMemo(() => {
-    return cakes.filter(
-      (cake) =>
+    return currentItems.filter(
+      (cake: Cake) =>
         cake.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         cake.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         cake.tags.some((tag) =>
           tag.toLowerCase().includes(searchTerm.toLowerCase())
         ) ||
-        (Array.isArray(cake.category) &&
-          cake.category.some((cat) =>
-            typeof cat === "string"
-              ? cat.toLowerCase().includes(searchTerm.toLowerCase())
-              : cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-          ))
+        cake.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [cakes, searchTerm]);
+  }, [currentItems, searchTerm]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = filteredData.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const paginatedItems = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
-  console.log("currentItems", currentItems);
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -56,23 +50,55 @@ const AllItems = () => {
 
   // Handle edit action
   const handleEdit = (id: string) => {
-    console.log("Edit item with id:", id);
-    // Implement your edit logic here
+    navigate(`/dashboard/products/edit/${id}`);
   };
 
-  // Handle delete action
-  const handleDelete = (id: string) => {
-    console.log("Delete item with id:", id);
-    // Implement your delete logic here
+  // Handle delete action with optimistic update
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await axiosSecure.delete(`/cake/${id}`);
+        if (res.data.deletedCount > 0) {
+          await refetch(); // Refetch data to update currentItems
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to delete the product.",
+            icon: "error",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Network error occurred.",
+          icon: "error",
+        });
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen  p-6">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="min-h-screen p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200">
           <h1 className="text-2xl font-bold text-gray-800">All Products</h1>
-          <p className="text-gray-600 mt-1">Total: {cakes.length} items</p>
+          <p className="text-gray-600 mt-1">Total: {currentItems.length} items</p>
         </div>
 
         {/* Search and Controls */}
@@ -106,151 +132,154 @@ const AllItems = () => {
 
         {/* Table */}
         <div className="w-full max-w-full overflow-x-auto">
-          <table className="min-w-[900px] w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Image
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Description
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Category
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Tags
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Stock
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {currentItems.length > 0 ? (
-                currentItems.map((cake) => (
-                  <tr
-                    key={cake._id}
-                    className="hover:bg-gray-50 transition-colors duration-150"
+          {loading ? (
+            <div className="text-center py-4">Loading...</div>
+          ) : (
+            <table className="min-w-[900px] w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <img
-                          className="h-10 w-10 rounded-full object-cover"
-                          src={
-                            cake.images ? cake.images : "/placeholder-image.jpg"
-                          }
-                          alt={cake.name}
-                        />
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {cake.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        ${cake.price} | {cake.sizes}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
-                        {cake.description}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-wrap gap-1">
-                        {cake.category}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-wrap gap-1">
-                        {cake.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-6 py-3 whitespace-nowrap">
-                      <button
-                        type="button"
-                        className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none ${
-                          cake.inStock ? "bg-indigo-600" : "bg-gray-300"
-                        }`}
-                        disabled
-                        tabIndex={-1}
-                      >
-                        <span
-                          className={`inline-block h-7 w-7 transform rounded-full bg-white shadow transition-transform ${
-                            cake.inStock ? "translate-x-8" : "translate-x-1"
+                    Image
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Description
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Category
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Tags
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Stock
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedItems.length > 0 ? (
+                  paginatedItems.map((cake: Cake) => (
+                    <tr
+                      key={cake._id}
+                      className="hover:bg-gray-50 transition-colors duration-150"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <img
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={
+                              cake.images ? cake.images : "/placeholder-image.jpg"
+                            }
+                            alt={cake.name}
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {cake.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          ${cake.price} | {cake.sizes}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900 max-w-xs truncate">
+                          {cake.description}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-wrap gap-1">
+                          {cake.category}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-wrap gap-1">
+                          {cake.tags.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-3 whitespace-nowrap">
+                        <button
+                          type="button"
+                          className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none ${
+                            cake.inStock ? "bg-indigo-600" : "bg-gray-300"
                           }`}
-                        />
-                        <span className="absolute left-2 text-xs font-semibold text-white select-none">
-                          {cake.inStock ? "Yes" : "No"}
-                        </span>
-                      </button>
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEdit(cake._id)}
-                          className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md text-sm transition-colors duration-150"
+                          disabled
+                          tabIndex={-1}
                         >
-                          Edit
+                          <span
+                            className={`inline-block h-7 w-7 transform rounded-full bg-white shadow transition-transform ${
+                              cake.inStock ? "translate-x-8" : "translate-x-1"
+                            }`}
+                          />
+                          <span className="absolute left-2 text-xs font-semibold text-white select-none">
+                            {cake.inStock ? "Yes" : "No"}
+                          </span>
                         </button>
-                        <button
-                          onClick={() => handleDelete(cake._id)}
-                          className="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md text-sm transition-colors duration-150"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(cake._id)}
+                            className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md text-sm transition-colors duration-150"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(cake._id)}
+                            className="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md text-sm transition-colors duration-150"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-6 py-4 text-center text-sm text-gray-500"
+                    >
+                      No products found matching your search criteria.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-4 text-center text-sm text-gray-500"
-                  >
-                    No products found matching your search criteria.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination */}

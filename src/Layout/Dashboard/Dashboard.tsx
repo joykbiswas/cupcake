@@ -122,7 +122,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <NavLink
-                      to="/dashboard/products/edit"
+                      to="/dashboard/products/edit/:id"
                       className={({ isActive }) =>
                         `flex items-center gap-2 px-2 py-1 rounded-md hover:bg-indigo-50 ${
                           isActive ? "text-indigo-600 font-semibold" : ""
