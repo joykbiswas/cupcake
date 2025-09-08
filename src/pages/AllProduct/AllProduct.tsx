@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Star, ShoppingCart, Eye, LayoutGrid, List } from 'lucide-react';
-import { cakesData, type Cake } from '../../data/allProduct';
+import { type Cake } from '../../types/cake';
 import { COLORS } from '../../constants/colors';
+import useMenu from '../../hooks/useMenu';
+import useAuth from '../../hooks/useAuth';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 
 const AllProductPage: React.FC = () => {
+  const [currentItems] = useMenu();
+  const auth = useAuth();
+  const user = auth?.user;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const axiosSecure = useAxiosSecure();
+
   const [products, setProducts] = useState<Cake[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -13,10 +25,47 @@ const AllProductPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high' | 'rating'>('name');
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
 
-  // Fetch cakes data from local mock file
+  const handleAddToCart = (product: Cake) => {
+    if (user && user.email) {
+      const cartItem = {
+        menuId: product._id,
+        email: user.email,
+        name: product.name,
+        image: product.images,
+        price: product.price,
+      };
+      axiosSecure.post('/cart', cartItem).then((res) => {
+        if (res.data.insertedId) {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: `${product.name} added to your cart`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        title: 'You are not Logged In',
+        text: 'Please login to add to the cart?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, login!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/signup', { state: { from: location } });
+        }
+      });
+    }
+  };
+
+  // Fetch cakes data from Server
   useEffect(() => {
-    setProducts(cakesData);
-  }, []);
+    setProducts(currentItems);
+  }, [currentItems]);
 
   // Get unique categories
   const categories = ['all', ...new Set(products.map((product) => product.category))];
@@ -62,10 +111,10 @@ const AllProductPage: React.FC = () => {
 
     return (
       <div className={`${isList ? 'flex' : ''} bg-white rounded-xl shadow-lg  overflow-hidden hover:shadow-xl transition-all duration-300 ${isList ? 'hover:translate-x-1' : 'transform hover:scale-105'}`}>
-        {/* Image */}
+        {/* images */}
         <div className={`${isList ? 'w-48 h-48 flex-shrink-0' : 'w-full h-48'} relative`}>
           <img
-            src={product.image}
+            src={product.images}
             alt={product.name}
             className={`object-cover ${isList ? 'w-48 h-48' : 'w-full h-48'}`}
           />
@@ -103,8 +152,11 @@ const AllProductPage: React.FC = () => {
                 <Eye className="w-4 h-4" />
               </button>
               <button
+                onClick={() => handleAddToCart(product)}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors text-white shadow-md ${
-                  product.inStock ? 'bg-gradient-to-r from-[#7C5228] to-[#553329] hover:from-[#553329] hover:to-[#7C5228]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  product.inStock
+                    ? 'bg-gradient-to-r from-[#7C5228] to-[#553329] hover:from-[#553329] hover:to-[#7C5228]'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
                 disabled={!product.inStock}
               >
@@ -235,7 +287,7 @@ const AllProductPage: React.FC = () => {
           <>
             <div className={`grid ${viewType === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
               {displayProducts.map((product) => (
-                <ProductCard key={product.id} product={product} viewType={viewType} />
+                <ProductCard key={product._id} product={product} viewType={viewType} />
               ))}
             </div>
 

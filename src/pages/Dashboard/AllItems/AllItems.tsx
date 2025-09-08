@@ -3,19 +3,19 @@ import { useNavigate } from "react-router-dom";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import useMenu from "../../../hooks/useMenu";
-
+import type { Cake } from '../../../types/cake'
 // Define TypeScript interfaces
-interface Cake {
-  _id: string;
-  name: string;
-  description: string;
-  images: string;
-  price: string;
-  sizes: string;
-  tags: string[];
-  category: string;
-  inStock: boolean;
-}
+// interface Cake {
+//   _id: string;
+//   name: string;
+//   description: string;
+//   images: string;
+//   price: string;
+//   sizes: string;
+//   tags: string[];
+//   category: string;
+//   inStock: boolean;
+// }
 
 const AllItems = () => {
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ const AllItems = () => {
             icon: "error",
           });
         }
-      } catch (error) {
+      } catch {
         Swal.fire({
           title: "Error!",
           text: "Network error occurred.",

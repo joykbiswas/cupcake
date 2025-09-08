@@ -29,7 +29,8 @@ import EditItem from "../pages/Dashboard/EditItem/EditItem";
         },
         {
             path:'/all-product',
-            element:<AllProductPage />
+            element:<AllProductPage />,
+            loader: () => fetch('http://localhost:5000/cake')
         },
       //  {
       //     path:'/login',

@@ -109,7 +109,7 @@ const EditItem = () => {
         ...prev,
         images: [uploadedImage.secure_url],
       }));
-    } catch (error) {
+    } catch {
       Swal.fire({
         title: "Error!",
         text: "Failed to upload image.",

@@ -106,9 +106,9 @@ const SignUp: React.FC = () => {
       });
       setSignUpData({ name: "", email: "", password: "", photo: null });
       navigate('/');
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      alert(error?.message || 'Failed to sign up');
+      alert(error.message || 'Failed to sign up');
     }
   };
 // -------------- Sign In Auth Functionality  --------------
