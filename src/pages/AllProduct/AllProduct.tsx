@@ -5,9 +5,9 @@ import { COLORS } from '../../constants/colors';
 import useMenu from '../../hooks/useMenu';
 import useAuth from '../../hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query'; // Add this import
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
-
 
 const AllProductPage: React.FC = () => {
   const [currentItems] = useMenu();
@@ -16,6 +16,7 @@ const AllProductPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient(); // Add this
 
   const [products, setProducts] = useState<Cake[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -24,6 +25,7 @@ const AllProductPage: React.FC = () => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high' | 'rating'>('name');
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
+console.log("products :::", products);
 
   const handleAddToCart = (product: Cake) => {
     if (user && user.email) {
@@ -31,7 +33,8 @@ const AllProductPage: React.FC = () => {
         menuId: product._id,
         email: user.email,
         name: product.name,
-        image: product.images,
+        category: product.category,
+        image: Array.isArray(product.images) ? product.images[0] : product.images, 
         price: product.price,
       };
       axiosSecure.post('/cart', cartItem).then((res) => {
@@ -39,11 +42,16 @@ const AllProductPage: React.FC = () => {
           Swal.fire({
             position: 'top-end',
             icon: 'success',
-            title: `${product.name} added to your cart`,
+            title: `${product.name} added to your cart!`, // Fix template literal
             showConfirmButton: false,
             timer: 1500,
           });
+          // Invalidate cart query to update navbar count
+          queryClient.invalidateQueries({ queryKey: ['cart', user.email] });
         }
+      }).catch((error) => {
+        console.error('Add to cart error:', error);
+        Swal.fire('Error', 'Failed to add to cart.', 'error');
       });
     } else {
       Swal.fire({
@@ -110,11 +118,11 @@ const AllProductPage: React.FC = () => {
     const isList = viewType === 'list';
 
     return (
-      <div className={`${isList ? 'flex' : ''} bg-white rounded-xl shadow-lg  overflow-hidden hover:shadow-xl transition-all duration-300 ${isList ? 'hover:translate-x-1' : 'transform hover:scale-105'}`}>
+      <div className={`${isList ? 'flex' : ''} bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 ${isList ? 'hover:translate-x-1' : 'transform hover:scale-105'}`}>
         {/* images */}
         <div className={`${isList ? 'w-48 h-48 flex-shrink-0' : 'w-full h-48'} relative`}>
           <img
-            src={product.images}
+            src={Array.isArray(product.images) ? product.images[0] : product.images} // Handle array
             alt={product.name}
             className={`object-cover ${isList ? 'w-48 h-48' : 'w-full h-48'}`}
           />
@@ -135,7 +143,6 @@ const AllProductPage: React.FC = () => {
           <p className={`text-gray-600 ${isList ? 'text-sm' : 'text-sm'} mb-3 line-clamp-2`}>{product.description}</p>
 
           <div className="flex flex-wrap gap-1 mb-3">
-
             {Array.isArray(product.tags) && product.tags.slice(0, 3).map((tag: string) => (
               <span key={String(tag)} className="bg-[#F5F1E8] text-[#7C5228] text-xs px-2 py-1 rounded-full border border-[#E8E0D0]">
                 {String(tag)}

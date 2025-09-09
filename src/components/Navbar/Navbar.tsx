@@ -3,13 +3,12 @@ import logo from "../../assets/cake.webp";
 import { motion } from "framer-motion";
 import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
-// import useCart from "../../hooks/useCart";
-// import { AiOutlineShoppingCart } from "react-icons/ai";
-
+import useCart from "../../hooks/useCart";
+import CartDrawer from "../../components/SideBar/CartDrawer"; 
 const SlideDown = (delay: number) => {
   return {
     initial: {
-      y: "-100",
+      y: -100, // Fixed: Use number instead of string
       opacity: 0,
     },
     animate: {
@@ -22,14 +21,16 @@ const SlideDown = (delay: number) => {
     },
   };
 };
+
 export default function Navbar() {
-  // const [cart] = useCart();
+  const [cart] = useCart();
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const auth = useAuth();
   const user = auth?.user;
   const logOut = auth?.logOut;
-  console.log("user", user);
 
   const handleLogOut = () => {
     logOut?.()
@@ -65,7 +66,8 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-[#3d1816b3] poppins dark:bg-gray-900 font- fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <>
+    <nav className="bg-[#3d1816b3] poppins dark:bg-gray-900 font- fixed w-full z-50 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-2xl mx-auto flex flex-wrap items-center justify-between px-12 py-4">
         {/* Logo */}
         <motion.div
@@ -74,10 +76,7 @@ export default function Navbar() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <Link
-            to="/"
-            className="flex items-center space-x-3 rtl:space-x-reverse"
-          >
+          <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src={logo} className="h-8" alt="Cupcake Logo" />
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
               Cup Cake
@@ -87,15 +86,17 @@ export default function Navbar() {
 
         {/* Right Buttons */}
         <div className="flex md:order-2 space-x-3 gap-4 md:space-x-0 rtl:space-x-reverse">
-          {/* Cart (visible on all devices) */}
+          {/* Cart Button (visible on all devices) */}
           <motion.div
-            variants={SlideDown(1)}
-            initial="initial"
-            animate="animate"
-            className="flex-none"
-          >
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn ghost btn-circle">
+              variants={SlideDown(1)}
+              initial="initial"
+              animate="animate"
+              className="flex-none"
+            >
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="btn btn-ghost btn-circle relative"
+              >
                 <div className="indicator">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -111,34 +112,14 @@ export default function Navbar() {
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
-                  <span className="badge badge-sm indicator-item">8</span>
+                  {cart.length > 0 && (
+                    <span className="badge badge-sm indicator-item bg-red-500 text-white">
+                      {cart.length}
+                    </span>
+                  )}
                 </div>
-              </div>
-              <div
-                tabIndex={0}
-                className="card card-compact dropdown-content bg-base-100 z-1 mt-3 w-52 shadow"
-              >
-                <div className="card-body">
-                  <span className="text-lg font-bold">8 Items</span>
-                  <span className="text-info">Subtotal: $999</span>
-                  <div className="card-actions">
-                    <button className="btn btn-primary btn-block">
-                      View cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <li>
-        {/* <Link to="/dashboard/cart">
-          <button className="btn text-white bg-slate-600 hover:bg-slate-500">
-          <AiOutlineShoppingCart className="mr-2"></AiOutlineShoppingCart>
-            <div className="badge badge-secondary">+{cart.length}</div>
-          </button>
-        </Link> */}
-      </li>
-          </motion.div>
+              </button>
+            </motion.div>
 
           {/* Profile Image (hidden on small devices) */}
           <motion.div
@@ -349,14 +330,12 @@ export default function Navbar() {
         </div>
 
         {/* Nav Links - Mobile Overlay */}
-
         <div
           className={`md:hidden ${
             isMenuOpen ? "block" : "hidden"
-          } fixed inset-0 bg-[#3d1816b3] z-30`}
+          } fixed inset-0 bg-[#3d1816b3] z-40`}
         >
           <div className="flex flex-col items-center justify-center h-full space-y-6">
-            {/* Always show main navigation */}
             {NavbarMenu.map((item) => (
               <motion.div
                 key={item.id}
@@ -374,7 +353,6 @@ export default function Navbar() {
               </motion.div>
             ))}
 
-            {/* Show Profile + Logout only if user is logged in */}
             {user ? (
               <>
                 <motion.div
@@ -408,7 +386,6 @@ export default function Navbar() {
                 </motion.div>
               </>
             ) : (
-              /* Show Login if no user */
               <motion.div
                 variants={SlideDown(0.9)}
                 initial="initial"
@@ -424,7 +401,6 @@ export default function Navbar() {
               </motion.div>
             )}
 
-            {/* Close button */}
             <button
               onClick={() => setIsMenuOpen(false)}
               className="absolute top-4 right-10 text-white text-2xl font-bold bg-gray-700 hover:bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center"
@@ -462,5 +438,12 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+     {/* Cart Drawer */}
+      <CartDrawer 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        cartItems={cart}
+      />
+      </>
   );
 }

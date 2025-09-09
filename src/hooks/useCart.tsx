@@ -10,9 +10,16 @@ const useCart = () => {
     const {refetch, data: cart = []} = useQuery({
       queryKey: ['cart', user?.email],
       queryFn: async () =>{
-        const res =await axiosSecure.get(`/carts?email=${user?.email}`)
+        if (!user?.email) return []; // Early return if no email
+        const res = await axiosSecure.get(`/cart?email=${user?.email}`); // Changed to /cart (singular)
         return res.data;
-      }
+      },
+      retry: (failureCount, error) => {
+        // Don't retry on 404 (resource not found, e.g., empty cart)
+        if (error?.response?.status === 404) return false;
+        return failureCount < 3; // Default retry for other errors
+      },
+      enabled: !!user?.email, // Only run if email exists
     })
     return[cart, refetch]
 };
