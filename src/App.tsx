@@ -6,8 +6,7 @@ import Menu from "./components/Menu/Menu";
 import Navbar from "./components/Navbar/Navbar";
 import ProductPage from "./pages/ProductPage";
 import { GRADIENTS } from "./constants/colors";
-// import Login from "./pages/login/login";
-// import HomePage from "./pages/homePage/homePage";
+
 
 function App() {
   return (
@@ -24,7 +23,6 @@ function App() {
       <Banner />
       <ProductPage />
 
-      {/* <Login /> */}
       <Footer />
 
 {/*    <HomePage /> */}

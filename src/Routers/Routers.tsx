@@ -10,9 +10,9 @@ import Dashboard from "../Layout/Dashboard/Dashboard";
 import AdminHome from "../pages/Dashboard/adminHome/AdminHome";
 import AddItem from "../pages/Dashboard/AddItem/AddItem";
 import AllItems from "../pages/Dashboard/AllItems/AllItems";
-// import Login from "../pages/login/login";
 import SignUp from "../pages/signUp/SignUp";
 import EditItem from "../pages/Dashboard/EditItem/EditItem";
+import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
 
   export const router = createBrowserRouter([
     {
@@ -32,10 +32,7 @@ import EditItem from "../pages/Dashboard/EditItem/EditItem";
             element:<AllProductPage />,
             loader: () => fetch('http://localhost:5000/cake')
         },
-      //  {
-      //     path:'/login',
-      //     element:<Login />
-      //   },
+      
         {
           path:'/signup',
           element:<SignUp />
@@ -60,16 +57,17 @@ import EditItem from "../pages/Dashboard/EditItem/EditItem";
     //       path: 'payment',
     //       element: <Payment></Payment>
     //     },
-    //     {
-    //       path:"paymentHistory",
-    //       element:<PaymentHistory></PaymentHistory>
-    //     },
+       
 
 
     //     // admin router
         {
           path: 'adminHome',
           element: <AdminHome />
+        },
+         {
+          path:"paymentsHistory",
+          element:<PaymentHistory />
         },
         {
           path: 'products/create',

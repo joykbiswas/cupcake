@@ -93,7 +93,7 @@ const AllItems = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen ">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200">
@@ -140,43 +140,43 @@ const AllItems = () => {
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Image
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Name
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Description
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Category
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Tags
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Stock
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Actions
                   </th>
@@ -189,7 +189,7 @@ const AllItems = () => {
                       key={cake._id}
                       className="hover:bg-gray-50 transition-colors duration-150"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex-shrink-0 h-10 w-10">
                           <img
                             className="h-10 w-10 rounded-full object-cover"
@@ -200,7 +200,7 @@ const AllItems = () => {
                           />
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-2 py-2 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {cake.name}
                         </div>
@@ -208,17 +208,17 @@ const AllItems = () => {
                           ${cake.price} | {cake.sizes}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2">
                         <div className="text-sm text-gray-900 max-w-xs truncate">
                           {cake.description}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex flex-wrap gap-1">
                           {cake.category}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex flex-wrap gap-1">
                           {cake.tags.map((tag, index) => (
                             <span
