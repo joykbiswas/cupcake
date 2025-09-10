@@ -110,7 +110,7 @@ const AddItem = () => {
     console.log("payload", payload);
 
     try {
-      const response = await fetch("http://localhost:5000/cake", {
+      const response = await fetch("https://cupcake-backend.vercel.app/cake", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

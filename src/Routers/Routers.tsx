@@ -30,7 +30,7 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
         {
             path:'/all-product',
             element:<AllProductPage />,
-            loader: () => fetch('http://localhost:5000/cake')
+            loader: () => fetch('https://cupcake-backend.vercel.app/cake')
         },
       
         {
@@ -76,12 +76,12 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
         {
           path: 'products/edit/:id',
           element: <EditItem />,
-          loader: ({params}) => fetch(`http://localhost:5000/cake/${params.id}`)
+          loader: ({params}) => fetch(`https://cupcake-backend.vercel.app/cake/${params.id}`)
         },
         {
           path: 'products/all',
           element: <AllItems />,
-          loader: () => fetch('http://localhost:5000/cake')
+          loader: () => fetch('https://cupcake-backend.vercel.app/cake')
         },
     //     {
     //       path:'addItems',
