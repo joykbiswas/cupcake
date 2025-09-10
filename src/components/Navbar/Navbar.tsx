@@ -23,7 +23,7 @@ const SlideDown = (delay: number) => {
 };
 
 export default function Navbar() {
-  const [cart] = useCart();
+  const [cart, refetch] = useCart();
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -95,7 +95,7 @@ export default function Navbar() {
             >
               <button 
                 onClick={() => setIsCartOpen(true)}
-                className="btn btn-ghost btn-circle relative"
+                className="btn btn-ghost text-white hover:text-black btn-circle relative"
               >
                 <div className="indicator">
                   <svg
@@ -443,6 +443,7 @@ export default function Navbar() {
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)} 
         cartItems={cart}
+         onCartUpdate={refetch}
       />
       </>
   );
