@@ -32,7 +32,7 @@ const SocialLogin = () => {
     return (
         <div>
            
-            <div className="py-3 pl-8">
+            <div className=" pl-8">
             {/* <div className="divider"></div> */}
                 <button onClick={handleGoogleSignIn} className="btn">
                     <FaGoogle className="mr-4"></FaGoogle>

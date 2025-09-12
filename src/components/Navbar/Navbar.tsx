@@ -5,6 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import useCart from "../../hooks/useCart";
 import CartDrawer from "../../components/SideBar/CartDrawer"; 
+import useAdmin from "../../hooks/useAdmin";
 const SlideDown = (delay: number) => {
   return {
     initial: {
@@ -31,6 +32,7 @@ export default function Navbar() {
   const auth = useAuth();
   const user = auth?.user;
   const logOut = auth?.logOut;
+  const [isAdmin] = useAdmin();
 
   const handleLogOut = () => {
     logOut?.()
@@ -38,7 +40,7 @@ export default function Navbar() {
       .catch((error) => console.error(error));
   };
 
-  const NavbarMenu = [
+  const allNavbarMenus = [
     {
       id: 1,
       title: "Home",
@@ -64,6 +66,9 @@ export default function Navbar() {
       delay: 0.7,
     },
   ];
+
+  const NavbarMenu = user && isAdmin ? allNavbarMenus : allNavbarMenus.filter(item => item.title !== 'Dashboard');
+  console.log("NavbarMenu", NavbarMenu);
 
   return (
     <>

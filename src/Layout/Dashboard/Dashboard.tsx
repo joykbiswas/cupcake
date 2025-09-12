@@ -10,7 +10,7 @@ import {
   AiOutlineCaretDown,
   AiOutlineCaretRight,
 } from "react-icons/ai";
-import { FaPlus, FaEdit, FaList } from "react-icons/fa";
+import { FaPlus, FaList } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 
 const Dashboard = () => {
@@ -73,7 +73,7 @@ const Dashboard = () => {
 
             <li>
               <NavLink
-                to="/dashboard/paymentsHistory"
+                to="/dashboard/all-paymentsHistory"
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-50 ${
                     isActive ? "bg-indigo-100 text-indigo-600" : ""
@@ -86,7 +86,7 @@ const Dashboard = () => {
             </li>
             <li>
               <NavLink
-                to="/dashboard/applications"
+                to="/dashboard/all-users"
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-50 ${
                     isActive ? "bg-indigo-100 text-indigo-600" : ""
@@ -94,9 +94,10 @@ const Dashboard = () => {
                 }
                 onClick={handleNavClick}
               >
-                <AiOutlineMenu /> Applications
+                <AiOutlineUser /> All Users
               </NavLink>
             </li>
+
             {/* Products Dropdown */}
             <li>
               <button
@@ -128,7 +129,7 @@ const Dashboard = () => {
                       <FaPlus /> Create Product
                     </NavLink>
                   </li>
-                  <li>
+                  {/* <li>
                     <NavLink
                       to="/dashboard/products/edit/:id"
                       className={({ isActive }) =>
@@ -140,7 +141,7 @@ const Dashboard = () => {
                     >
                       <FaEdit /> Edit Product
                     </NavLink>
-                  </li>
+                  </li> */}
                   <li>
                     <NavLink
                       to="/dashboard/products/all"
@@ -175,8 +176,9 @@ const Dashboard = () => {
 
         {/* Bottom Profile Section */}
         <div className="mt-auto pt-4 border-t border-gray-200">
+           <NavLink to="/dashboard/adminProfile">
           <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer">
-            <NavLink to="/dashboard/adminProfile">
+           
               <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-100 flex items-center justify-center">
                 {user?.photoURL ? (
                   <img
@@ -196,8 +198,9 @@ const Dashboard = () => {
                   {user?.email || "No email available"}
                 </p>
               </div>
-            </NavLink>
+            
           </div>
+          </NavLink>
         </div>
       </div>
 

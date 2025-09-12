@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import {  useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "../../components/SocialLogin/SocialLogin";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
-// import { Eye, EyeOff, Mail } from "lucide-react";
 import { Eye, EyeOff, Upload, User, Mail, Lock } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as
   | string
   | undefined;
@@ -19,6 +20,18 @@ interface FormData {
   password: string;
   photo: File | null;
 }
+
+// Demo credentials for admin and user
+const DEMO_CREDENTIALS = {
+  admin: {
+    email: "admin@demo.com",
+    password: "admin123",
+  },
+  user: {
+    email: "user@demo.com",
+    password: "user123",
+  },
+};
 
 const SignUp: React.FC = () => {
   const [signin, toggle] = useState(true);
@@ -219,10 +232,24 @@ const SignUp: React.FC = () => {
     }));
   };
 
+  // Function to fill demo credentials
+  const fillDemoCredentials = (type: "admin" | "user") => {
+    setSignInData({
+      email: DEMO_CREDENTIALS[type].email,
+      password: DEMO_CREDENTIALS[type].password,
+    });
+  };
+
   return (
       <div className="min-h-screen flex items-center justify-center py-8 bg-gradient-to-br from-gray-100 to-gray-200">
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-40" />
-      <div className="bg-white rounded-lg shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] relative overflow-hidden w-[800px] max-w-full min-h-[600px]">
+
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="bg-white rounded-lg shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] relative overflow-hidden w-[800px] max-w-full min-h-[600px]"
+      >
         {/* Sign Up Container */}
         <div
           className={`absolute top-0 h-full transition-all duration-600 ease-in-out left-0 w-1/2 opacity-0 z-1 ${
@@ -233,11 +260,30 @@ const SignUp: React.FC = () => {
             onSubmit={handleSignUpSubmit}
             className="bg-white flex items-center justify-center flex-col px-12 h-full text-center space-y-6"
           >
-            <h1 className="font-bold text-3xl text-gray-800 mb-2">Create Account</h1>
-            <p className="text-gray-600 text-sm mb-6">Join our sweet community</p>
-            
+            <motion.h1
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="font-bold text-3xl text-gray-800 mb-2"
+            >
+              Create Account
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-gray-600 text-sm mb-6"
+            >
+              Join our sweet community
+            </motion.p>
+
             {/* Name Input */}
-            <div className="relative w-full">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="relative w-full"
+            >
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="h-5 w-5 text-teal-700" />
               </div>
@@ -252,15 +298,20 @@ const SignUp: React.FC = () => {
                 required
               />
               <label
-                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/name:top-3.5 peer-placeholder-shown/name:bg-transparent peer-placeholder-shown/name:text-sm peer-placeholder-shown/name:text-gray-500 peer-focus/name:-top-2 peer-focus/name:bg-blue-600 peer-focus/name:text-xs peer-focus/name:text-white"
+                className="absolute -top-2 left-8 rounded-md bg-gray-300 px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/name:top-3.5 peer-placeholder-shown/name:bg-transparent peer-placeholder-shown/name:text-sm peer-placeholder-shown/name:text-gray-500 peer-focus/name:-top-2 peer-focus/name:bg-blue-600 peer-focus/name:text-xs peer-focus/name:text-white"
                 htmlFor="navigate_ui_name_33"
               >
                 Full Name
               </label>
-            </div>
+            </motion.div>
 
             {/* Email Input */}
-            <div className="relative w-full">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="relative w-full"
+            >
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="h-5 w-5 text-teal-700" />
               </div>
@@ -275,15 +326,20 @@ const SignUp: React.FC = () => {
                 required
               />
               <label
-                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/email:top-3.5 peer-placeholder-shown/email:bg-transparent peer-placeholder-shown/email:text-sm peer-placeholder-shown/email:text-gray-500 peer-focus/email:-top-2 peer-focus/email:bg-blue-600 peer-focus/email:text-xs peer-focus/email:text-white"
+                className="absolute -top-2 left-8 rounded-md bg-gray-300 px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/email:top-3.5 peer-placeholder-shown/email:bg-transparent peer-placeholder-shown/email:text-sm peer-placeholder-shown/email:text-gray-500 peer-focus/email:-top-2 peer-focus/email:bg-blue-600 peer-focus/email:text-xs peer-focus/email:text-white"
                 htmlFor="navigate_ui_email_33"
               >
                 Email Address
               </label>
-            </div>
+            </motion.div>
 
             {/* Password Input */}
-            <div className="relative w-full">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              className="relative w-full"
+            >
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-teal-700" />
               </div>
@@ -298,7 +354,7 @@ const SignUp: React.FC = () => {
                 required
               />
               <label
-                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/pass:top-3.5 peer-placeholder-shown/pass:bg-transparent peer-placeholder-shown/pass:text-sm peer-placeholder-shown/pass:text-gray-500 peer-focus/pass:-top-2 peer-focus/pass:bg-blue-600 peer-focus/pass:text-xs peer-focus/pass:text-white"
+                className="absolute -top-2 left-8 rounded-md bg-gray-300 px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/pass:top-3.5 peer-placeholder-shown/pass:bg-transparent peer-placeholder-shown/pass:text-sm peer-placeholder-shown/pass:text-gray-500 peer-focus/pass:-top-2 peer-focus/pass:bg-blue-600 peer-focus/pass:text-xs peer-focus/pass:text-white"
                 htmlFor="navigate_ui_password_33"
               >
                 Password
@@ -310,10 +366,15 @@ const SignUp: React.FC = () => {
               >
                 {showSignUpPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-            </div>
+            </motion.div>
 
             {/* Photo Input */}
-            <div className="relative w-full">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 }}
+              className="relative w-full"
+            >
               <label className="block text-left text-sm font-medium text-gray-700 mb-2">
                 Profile Photo
               </label>
@@ -328,21 +389,32 @@ const SignUp: React.FC = () => {
                 <div className="bg-gray-50 border-2 border-gray-300 rounded-xl p-3 text-center flex items-center justify-center gap-2">
                   <Upload className="h-5 w-5 text-teal-700" />
                   <span className="text-gray-700 font-medium">
-                    {signUpData.photo ? signUpData.photo.name : "Choose profile photo"}
+                    {signUpData.photo
+                      ? signUpData.photo.name
+                      : "Choose profile photo"}
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <button
+            <motion.button
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
               type="submit"
               className="w-full rounded-xl bg-gradient-to-r from-teal-600 to-blue-800 text-white font-semibold px-8 py-4 tracking-wide uppercase transition-all duration-300 hover:from-teal-700 hover:to-blue-900 hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2"
             >
               Create Account
-            </button>
-            <div className="w-full">
+            </motion.button>
+
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.9 }}
+              className="w-full"
+            >
               <SocialLogin />
-            </div>
+            </motion.div>
           </form>
         </div>
 
@@ -354,13 +426,32 @@ const SignUp: React.FC = () => {
         >
           <form
             onSubmit={handleSignInSubmit}
-            className="bg-white flex items-center justify-center flex-col px-12 h-full text-center space-y-6"
+            className="bg-white flex items-center justify-center flex-col px-12 h-full text-center space-y-4"
           >
-            <h1 className="font-bold text-3xl text-gray-800 mb-2">Welcome Back</h1>
-            <p className="text-gray-600 text-sm mb-6">Sign in to your account</p>
-            
+            <motion.h1
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="font-bold text-3xl text-gray-800 mb-2"
+            >
+              Welcome Back
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-gray-600 text-sm mb-6"
+            >
+              Sign in to your account
+            </motion.p>
+
             {/* Email Input */}
-            <div className="relative w-full">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="relative w-full"
+            >
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="h-5 w-5 text-teal-700" />
               </div>
@@ -376,15 +467,20 @@ const SignUp: React.FC = () => {
                 disabled={isLoading}
               />
               <label
-                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/email:top-3.5 peer-placeholder-shown/email:bg-transparent peer-placeholder-shown/email:text-sm peer-placeholder-shown/email:text-gray-500 peer-focus/email:-top-2 peer-focus/email:bg-blue-600 peer-focus/email:text-xs peer-focus/email:text-white "
+                className="absolute -top-2 left-8 rounded-md bg-gray-300 px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/email:top-3.5 peer-placeholder-shown/email:bg-transparent peer-placeholder-shown/email:text-sm peer-placeholder-shown/email:text-gray-500 peer-focus/email:-top-2 peer-focus/email:bg-blue-600 peer-focus/email:text-xs peer-focus/email:text-white"
                 htmlFor="signin_email_33"
               >
                 Email Address
               </label>
-            </div>
+            </motion.div>
 
             {/* Password Input */}
-            <div className="relative w-full">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="relative w-full"
+            >
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-teal-700" />
               </div>
@@ -400,7 +496,7 @@ const SignUp: React.FC = () => {
                 disabled={isLoading}
               />
               <label
-                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/pass:top-3.5 peer-placeholder-shown/pass:bg-transparent peer-placeholder-shown/pass:text-sm peer-placeholder-shown/pass:text-gray-500 peer-focus/pass:-top-2 peer-focus/pass:bg-blue-600 peer-focus/pass:text-xs peer-focus/pass:text-white"
+                className="absolute -top-2 left-8 rounded-md bg-gray-300 px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/pass:top-3.5 peer-placeholder-shown/pass:bg-transparent peer-placeholder-shown/pass:text-sm peer-placeholder-shown/pass:text-gray-500 peer-focus/pass:-top-2 peer-focus/pass:bg-blue-600 peer-focus/pass:text-xs peer-focus/pass:text-white"
                 htmlFor="signin_password_33"
               >
                 Password
@@ -412,18 +508,35 @@ const SignUp: React.FC = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-            </div>
+            </motion.div>
 
-            {error && (
-              <div className="w-full text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
-                {error}
-              </div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, x: 30 }}
+                  animate={{ opacity: 1, height: "auto", x: 0 }}
+                  exit={{ opacity: 0, height: 0, x: 30 }}
+                  className="w-full text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            <a href="#" className="text-teal-600 text-sm no-underline hover:text-teal-700 hover:underline transition-colors">
+            <motion.a
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              href="#"
+              className="text-teal-600 text-sm no-underline hover:text-teal-700 hover:underline transition-colors"
+            >
               Forgot your password?
-            </a>
-            <button
+            </motion.a>
+
+            <motion.button
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 }}
               type="submit"
               disabled={isLoading}
               className={`w-full rounded-xl font-semibold px-8 py-4 tracking-wide uppercase transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
@@ -433,13 +546,23 @@ const SignUp: React.FC = () => {
               }`}
             >
               {isLoading ? "Signing In..." : "Sign In"}
-            </button>
+            </motion.button>
 
-            <div className="w-full">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
+              className="w-full"
+            >
               <SocialLogin />
-            </div>
+            </motion.div>
 
-            <p className="text-gray-700">
+            <motion.p
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.9 }}
+              className="text-gray-700"
+            >
               New Here?{" "}
               <button
                 type="button"
@@ -448,7 +571,30 @@ const SignUp: React.FC = () => {
               >
                 Create an account
               </button>
-            </p>
+            </motion.p>
+
+            {/* Admin/User Presets */}
+            <div className="border-t border-gray-200 pt-4 w-full">
+              <p className="text-center text-sm text-gray-600 mb-4">
+                Quick login options
+              </p>
+              <div className="flex space-x-4 justify-center">
+                <button
+                  type="button"
+                  onClick={() => fillDemoCredentials("admin")}
+                  className="bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-900 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
+                >
+                  Admin Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fillDemoCredentials("user")}
+                  className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
+                >
+                  User Login
+                </button>
+              </div>
+            </div>
           </form>
         </div>
 
@@ -458,7 +604,10 @@ const SignUp: React.FC = () => {
             !signin ? "transform -translate-x-full" : ""
           }`}
         >
-          <div
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className={`bg-gradient-to-r from-teal-600 via-blue-800 to-teal-600 text-white relative left-[-100%] h-full w-[200%] transform transition-transform duration-600 ease-in-out ${
               !signin ? "transform translate-x-1/2" : ""
             }`}
@@ -472,18 +621,33 @@ const SignUp: React.FC = () => {
               }`}
             >
               <span className="absolute -left-8 -top-8 z-20 h-32 w-32 rounded-full bg-blue-800/20 duration-500 group-hover:h-56 group-hover:w-56"></span>
-                <span className="absolute -left-5 -top-5 z-10 h-36 w-36 rounded-full bg-blue-800/50"></span>
+              <span className="absolute -left-5 -top-5 z-10 h-36 w-36 rounded-full bg-blue-800/50"></span>
 
-              <h1 className="font-bold text-2xl mb-4">Welcome Back!</h1>
-              <p className="text-blue-100 text-sm leading-5 tracking-wide mb-8">
+              <motion.h1
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="font-bold text-2xl mb-4"
+              >
+                Welcome Back!
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-blue-100 text-sm leading-5 tracking-wide mb-8"
+              >
                 To keep connected with us please login with your personal info
-              </p>
-              <button
+              </motion.p>
+              <motion.button
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 }}
                 onClick={() => toggle(true)}
                 className="rounded-xl border-2 border-white bg-transparent text-white font-semibold px-8 py-3 tracking-wide uppercase transition-all duration-300 hover:bg-white hover:text-teal-700 transform hover:-translate-y-0.5"
               >
                 Sign In
-              </button>
+              </motion.button>
             </div>
 
             {/* Right Overlay Panel */}
@@ -495,22 +659,37 @@ const SignUp: React.FC = () => {
               }`}
             >
               <span className="absolute -right-8 -top-8 z-20 h-32 w-32 rounded-full bg-blue-800/20 duration-500 group-hover:h-56 group-hover:w-56"></span>
-                <span className="absolute -right-5 -top-5 z-10 h-36 w-36 rounded-full bg-blue-800/50"></span>
+              <span className="absolute -right-5 -top-5 z-10 h-36 w-36 rounded-full bg-blue-800/50"></span>
 
-              <h1 className="font-bold text-2xl mb-4">Hello, Friend!</h1>
-              <p className="text-blue-100 text-sm leading-5 tracking-wide mb-8">
+              <motion.h1
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="font-bold text-2xl mb-4"
+              >
+                Hello, Friend!
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-blue-100 text-sm leading-5 tracking-wide mb-8"
+              >
                 Enter your personal details and start your sweet journey with us
-              </p>
-              <button
+              </motion.p>
+              <motion.button
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 }}
                 onClick={() => toggle(false)}
                 className="rounded-xl border-2 border-white bg-transparent text-white font-semibold px-8 py-3 tracking-wide uppercase transition-all duration-300 hover:bg-white hover:text-teal-900 transform hover:-translate-y-0.5"
               >
                 Sign Up
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

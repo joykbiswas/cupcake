@@ -12,8 +12,9 @@ import AddItem from "../pages/Dashboard/AddItem/AddItem";
 import AllItems from "../pages/Dashboard/AllItems/AllItems";
 import SignUp from "../pages/signUp/SignUp";
 import EditItem from "../pages/Dashboard/EditItem/EditItem";
-import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
 import AdminProfile from "../pages/Dashboard/AdminProfile/AdminProfile";
+import AllUsers from "../pages/Dashboard/AllUsers/AllUsers";
+import AllPaymentHistory from "../pages/Dashboard/AllPaymentHistory/AllPaymentHistory";
 
   export const router = createBrowserRouter([
     {
@@ -52,8 +53,12 @@ import AdminProfile from "../pages/Dashboard/AdminProfile/AdminProfile";
           element: <AdminHome />
         },
          {
-          path:"paymentsHistory",
-          element:<PaymentHistory />
+          path:"all-paymentsHistory",
+          element:<AllPaymentHistory />
+        },
+         {
+          path:"all-users",
+          element:<AllUsers />
         },
         {
           path: 'products/create',
