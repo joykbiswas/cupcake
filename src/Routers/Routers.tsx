@@ -13,6 +13,7 @@ import AllItems from "../pages/Dashboard/AllItems/AllItems";
 import SignUp from "../pages/signUp/SignUp";
 import EditItem from "../pages/Dashboard/EditItem/EditItem";
 import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
+import AdminProfile from "../pages/Dashboard/AdminProfile/AdminProfile";
 
   export const router = createBrowserRouter([
     {
@@ -44,23 +45,8 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
       path: '/dashboard',
       element: <Dashboard />,
       children:[
-        // normal user routes
-        // {
-        //   path:'userHome',
-        //   element:<UserHome></UserHome>
-        // },
-    //     {
-    //       path:'cart',
-    //       element:<Cart></Cart>
-    //     },
-    //     {
-    //       path: 'payment',
-    //       element: <Payment></Payment>
-    //     },
-       
 
-
-    //     // admin router
+        // admin router
         {
           path: 'adminHome',
           element: <AdminHome />
@@ -82,6 +68,10 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory/PaymentHistory";
           path: 'products/all',
           element: <AllItems />,
           loader: () => fetch('https://cupcake-backend.vercel.app/cake')
+        },
+        {
+          path: 'adminProfile',
+          element: <AdminProfile />
         },
     //     {
     //       path:'addItems',

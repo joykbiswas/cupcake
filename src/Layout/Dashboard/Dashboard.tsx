@@ -6,13 +6,19 @@ import {
   AiOutlineShoppingCart,
   AiOutlineMenu,
   AiOutlineClose,
+  AiOutlineUser,
+  AiOutlineCaretDown,
+  AiOutlineCaretRight,
 } from "react-icons/ai";
 import { FaPlus, FaEdit, FaList } from "react-icons/fa";
+import useAuth from "../../hooks/useAuth";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProductsOpen, setIsProductsOpen] = useState(false);
-  
+  const auth = useAuth();
+  const user = auth?.user;
+
   const handleNavClick = () => {
     if (window.innerWidth < 1280) setIsOpen(false);
   };
@@ -43,7 +49,7 @@ const Dashboard = () => {
             <AiOutlineClose />
           </button>
         </div>
-        <div>
+        <div className="flex-1">
           {/* Logo */}
           <div className="flex items-center justify-center py-4 border-b">
             <h1 className="text-xl font-bold text-indigo-600">CupCake</h1>
@@ -64,7 +70,7 @@ const Dashboard = () => {
                 <AiFillHome /> Dashboard
               </NavLink>
             </li>
-           
+
             <li>
               <NavLink
                 to="/dashboard/paymentsHistory"
@@ -100,7 +106,11 @@ const Dashboard = () => {
                 <AiOutlineShoppingCart className="text-green-600" />
                 <span className="flex-1 text-left">Products</span>
                 <span className="text-sm">
-                  {isProductsOpen ? "▾" : "▸"}
+                  {isProductsOpen ? (
+                    <AiOutlineCaretRight />
+                  ) : (
+                    <AiOutlineCaretDown />
+                  )}
                 </span>
               </button>
               {isProductsOpen && (
@@ -162,8 +172,33 @@ const Dashboard = () => {
             </li>
           </ul>
         </div>
-        {/* Add bottom space */}
-        <div className="h-8" />
+
+        {/* Bottom Profile Section */}
+        <div className="mt-auto pt-4 border-t border-gray-200">
+          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer">
+            <NavLink to="/dashboard/adminProfile">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-100 flex items-center justify-center">
+                {user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt={user?.displayName || "User"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <AiOutlineUser className="text-indigo-600 text-xl" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.displayName || "User"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {user?.email || "No email available"}
+                </p>
+              </div>
+            </NavLink>
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}

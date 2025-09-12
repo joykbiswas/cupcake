@@ -5,18 +5,18 @@ import { COLORS } from '../../constants/colors';
 import useMenu from '../../hooks/useMenu';
 import useAuth from '../../hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query'; // Add this import
+import { useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 const AllProductPage: React.FC = () => {
-  const [currentItems] = useMenu();
+  const [currentItems, isLoading] = useMenu();
   const auth = useAuth();
   const user = auth?.user;
   const navigate = useNavigate();
   const location = useLocation();
   const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient(); // Add this
+  const queryClient = useQueryClient();
 
   const [products, setProducts] = useState<Cake[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -25,7 +25,6 @@ const AllProductPage: React.FC = () => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high' | 'rating'>('name');
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
-console.log("products :::", products);
 
   const handleAddToCart = (product: Cake) => {
     if (user && user.email) {
@@ -42,11 +41,10 @@ console.log("products :::", products);
           Swal.fire({
             position: 'top-end',
             icon: 'success',
-            title: `${product.name} added to your cart!`, // Fix template literal
+            title: `${product.name} added to your cart!`,
             showConfirmButton: false,
             timer: 1500,
           });
-          // Invalidate cart query to update navbar count
           queryClient.invalidateQueries({ queryKey: ['cart', user.email] });
         }
       }).catch((error) => {
@@ -70,26 +68,20 @@ console.log("products :::", products);
     }
   };
 
-  // Fetch cakes data from Server
   useEffect(() => {
     setProducts(currentItems);
   }, [currentItems]);
 
-  // Get unique categories
   const categories = ['all', ...new Set(products.map((product) => product.category))];
 
-  // Filter and search logic
   const filteredProducts = useMemo<Cake[]>(() => {
     const filtered = products.filter((product) => {
-      // Search filter
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (Array.isArray(product.tags) && product.tags.some((tag: string) => String(tag).toLowerCase().includes(searchTerm.toLowerCase())));
 
-      // Category filter
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
 
-      // Price filter
       let matchesPrice = true;
       if (priceRange === 'under-25') matchesPrice = product.price < 25;
       else if (priceRange === '25-35') matchesPrice = product.price >= 25 && product.price <= 35;
@@ -98,7 +90,6 @@ console.log("products :::", products);
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
-    // Sort products
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price-low': return a.price - b.price;
@@ -111,7 +102,6 @@ console.log("products :::", products);
     return filtered;
   }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
-  // Display products (10 or all)
   const displayProducts = showAll ? filteredProducts : filteredProducts.slice(0, 10);
 
   const ProductCard: React.FC<{ product: Cake; viewType: 'grid' | 'list' }> = ({ product, viewType }) => {
@@ -119,12 +109,12 @@ console.log("products :::", products);
 
     return (
       <div className={`${isList ? 'flex' : ''} bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 ${isList ? 'hover:translate-x-1' : 'transform hover:scale-105'}`}>
-        {/* images */}
-        <div className={`${isList ? 'w-48 h-48 flex-shrink-0' : 'w-full h-48'} relative`}>
+        {/* Image container with overflow hidden to contain the scale effect */}
+        <div className={`${isList ? 'w-48 h-48 flex-shrink-0' : 'w-full h-48'} relative overflow-hidden`}>
           <img
-            src={Array.isArray(product.images) ? product.images[0] : product.images} // Handle array
+            src={Array.isArray(product.images) ? product.images[0] : product.images}
             alt={product.name}
-            className={`object-cover ${isList ? 'w-48 h-48' : 'w-full h-48'}`}
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
           />
           {!product.inStock && (
             <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
@@ -183,19 +173,27 @@ console.log("products :::", products);
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen mt-12 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7C5228] mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600">Loading delicious cakes...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen mt-12 bg-gradient-to-br from-pink-50 to-purple-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Title centered */}
           <div className="mb-4">
             <h1 className="text-3xl font-bold text-gray-800 text-center">Our Delicious Cakes</h1>
           </div>
 
-          {/* Search, Filters, and Toggle (toggle on right) */}
           <div className="flex flex-col lg:flex-row gap-4 items-center">
-            {/* Search */}
             <div className="relative flex-1 max-w-md self-stretch w-full">
               <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
               <input
@@ -207,7 +205,6 @@ console.log("products :::", products);
               />
             </div>
 
-            {/* Filters */}
             <div className="flex flex-wrap gap-3">
               <select
                 value={selectedCategory}
@@ -244,7 +241,6 @@ console.log("products :::", products);
               </select>
             </div>
 
-            {/* Toggle on the right */}
             <div className="flex items-center gap-2 ml-auto">
               <button
                 aria-label="Grid view"
@@ -265,7 +261,6 @@ console.log("products :::", products);
             </div>
           </div>
 
-          {/* Results count */}
           <div className="mt-4 flex items-center justify-between">
             <p className="text-gray-600">
               Showing {displayProducts.length} of {filteredProducts.length} products
@@ -282,7 +277,6 @@ console.log("products :::", products);
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12">
@@ -298,7 +292,6 @@ console.log("products :::", products);
               ))}
             </div>
 
-            {/* Show All Button */}
             {!showAll && filteredProducts.length > 10 && (
               <div className="text-center mt-8">
                 <button

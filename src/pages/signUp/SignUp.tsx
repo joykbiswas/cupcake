@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "../../components/SocialLogin/SocialLogin";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
-
+// import { Eye, EyeOff, Mail } from "lucide-react";
+import { Eye, EyeOff, Upload, User, Mail, Lock } from "lucide-react";
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as
   | string
   | undefined;
@@ -34,23 +35,21 @@ const SignUp: React.FC = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
 
   const axiosPublic = useAxiosPublic();
-  console.log("axiosPublic", axiosPublic);
-  // const { register, handleSubmit,reset, formState: { errors }} = useForm()
   const navigate = useNavigate();
   const auth = useAuth();
 
   const handleSignUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form data FIRST
     if (!signUpData.name || !signUpData.email || !signUpData.password) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Optional: require photo for profile
     if (!signUpData.photo) {
       alert("Please select a profile image to upload");
       return;
@@ -65,7 +64,6 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      // Upload image if provided
       let uploadedPhotoUrl = "";
       if (signUpData.photo) {
         if (!cloudName) {
@@ -92,7 +90,6 @@ const SignUp: React.FC = () => {
           return;
         }
         const uploaded = await res.json();
-        console.log("cloudinary response", uploaded);
         uploadedPhotoUrl = uploaded?.secure_url || uploaded?.url || "";
         if (!uploadedPhotoUrl) {
           alert("Could not get uploaded image URL from Cloudinary response.");
@@ -101,14 +98,12 @@ const SignUp: React.FC = () => {
       }
 
       const userCred = await createUser(signUpData.email, signUpData.password);
-      console.log("signed up user", userCred.user);
       await updateUserprofile(signUpData.name, uploadedPhotoUrl);
       try {
         await userCred.user.reload();
       } catch (e) {
         console.warn("user reload failed", e);
       }
-      console.log("updated profile photoURL", userCred.user.photoURL);
 
       const userInfo = {
         name: signUpData.name,
@@ -132,7 +127,6 @@ const SignUp: React.FC = () => {
       navigate("/");
     } catch (error) {
       console.error(error);
-
       if (error instanceof Error) {
         alert(error.message || "Failed to sign up");
       } else {
@@ -140,33 +134,25 @@ const SignUp: React.FC = () => {
       }
     }
   };
-  // -------------- Sign In Auth Functionality  --------------
+
   const signIn = auth?.signIn;
   const location = useLocation();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const from = location.state?.from?.pathname || "/";
-  console.log("user location login", location.state);
-
 
   const handleSignInSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form data FIRST
     if (!signInData.email || !signInData.password) {
       setError("Please fill in both email and password");
       return;
     }
 
-    // Clear any previous errors
     setError("");
     setIsLoading(true);
 
-    // Log data to console
-    console.log("Sign In Data:", signInData);
-
-    // Call Firebase sign in
     if (!signIn) {
       setError("Authentication is not ready. Please try again in a moment.");
       setIsLoading(false);
@@ -234,10 +220,9 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200" />
+      <div className="min-h-screen flex items-center justify-center py-8 bg-gradient-to-br from-gray-100 to-gray-200">
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] opacity-40" />
-      <div className="bg-white rounded-lg shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] relative overflow-hidden w-[678px] max-w-full min-h-[400px]">
+      <div className="bg-white rounded-lg shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] relative overflow-hidden w-[800px] max-w-full min-h-[600px]">
         {/* Sign Up Container */}
         <div
           className={`absolute top-0 h-full transition-all duration-600 ease-in-out left-0 w-1/2 opacity-0 z-1 ${
@@ -246,51 +231,118 @@ const SignUp: React.FC = () => {
         >
           <form
             onSubmit={handleSignUpSubmit}
-            className="bg-white flex items-center justify-center flex-col px-[50px] h-full text-center"
+            className="bg-white flex items-center justify-center flex-col px-12 h-full text-center space-y-6"
           >
-            <h1 className="font-bold m-0">Create Account</h1>
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={signUpData.name}
-              onChange={handleSignUpInputChange}
-              className="bg-[#eee] border-none px-[15px] py-3 my-2 w-full"
-              required
-            />
+            <h1 className="font-bold text-3xl text-gray-800 mb-2">Create Account</h1>
+            <p className="text-gray-600 text-sm mb-6">Join our sweet community</p>
+            
+            {/* Name Input */}
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-teal-700" />
+              </div>
+              <input
+                className="pl-10 peer/name block w-full rounded-xl border-2 border-gray-300 bg-gray-50 p-3.5 shadow-sm outline-none transition-all focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
+                type="text"
+                name="name"
+                value={signUpData.name}
+                onChange={handleSignUpInputChange}
+                placeholder=""
+                id="navigate_ui_name_33"
+                required
+              />
+              <label
+                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/name:top-3.5 peer-placeholder-shown/name:bg-transparent peer-placeholder-shown/name:text-sm peer-placeholder-shown/name:text-gray-500 peer-focus/name:-top-2 peer-focus/name:bg-blue-600 peer-focus/name:text-xs peer-focus/name:text-white"
+                htmlFor="navigate_ui_name_33"
+              >
+                Full Name
+              </label>
+            </div>
 
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={signUpData.email}
-              onChange={handleSignUpInputChange}
-              className="bg-[#eee] border-none px-[15px] py-3 my-2 w-full"
-              required
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={signUpData.password}
-              onChange={handleSignUpInputChange}
-              className="bg-[#eee] border-none px-[15px] py-3 my-2 w-full"
-              required
-            />
-            <input
-              type="file"
-              name="photo"
-              accept="image/*"
-              onChange={handleSignUpPhotoChange}
-              className="bg-[#eee] border-none px-[15px] py-3 my-2 w-full"
-            />
+            {/* Email Input */}
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-teal-700" />
+              </div>
+              <input
+                className="pl-10 peer/email block w-full rounded-xl border-2 border-gray-300 bg-gray-50 p-3.5 shadow-sm outline-none transition-all focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
+                type="email"
+                name="email"
+                value={signUpData.email}
+                onChange={handleSignUpInputChange}
+                placeholder=""
+                id="navigate_ui_email_33"
+                required
+              />
+              <label
+                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/email:top-3.5 peer-placeholder-shown/email:bg-transparent peer-placeholder-shown/email:text-sm peer-placeholder-shown/email:text-gray-500 peer-focus/email:-top-2 peer-focus/email:bg-blue-600 peer-focus/email:text-xs peer-focus/email:text-white"
+                htmlFor="navigate_ui_email_33"
+              >
+                Email Address
+              </label>
+            </div>
+
+            {/* Password Input */}
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-teal-700" />
+              </div>
+              <input
+                className="pl-10 pr-10 peer/pass block w-full rounded-xl border-2 border-gray-300 bg-gray-50 p-3.5 shadow-sm outline-none transition-all focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
+                type={showSignUpPassword ? "text" : "password"}
+                name="password"
+                value={signUpData.password}
+                onChange={handleSignUpInputChange}
+                placeholder=""
+                id="navigate_ui_password_33"
+                required
+              />
+              <label
+                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/pass:top-3.5 peer-placeholder-shown/pass:bg-transparent peer-placeholder-shown/pass:text-sm peer-placeholder-shown/pass:text-gray-500 peer-focus/pass:-top-2 peer-focus/pass:bg-blue-600 peer-focus/pass:text-xs peer-focus/pass:text-white"
+                htmlFor="navigate_ui_password_33"
+              >
+                Password
+              </label>
+              <button
+                type="button"
+                className="absolute right-3 top-3.5 text-gray-500 hover:text-teal-600 transition-colors"
+                onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+              >
+                {showSignUpPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {/* Photo Input */}
+            <div className="relative w-full">
+              <label className="block text-left text-sm font-medium text-gray-700 mb-2">
+                Profile Photo
+              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  name="photo"
+                  accept="image/*"
+                  onChange={handleSignUpPhotoChange}
+                  className="block w-full rounded-xl border-2 border-gray-300 bg-gray-50 p-3.5 shadow-sm outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 opacity-0 absolute inset-0 z-10 cursor-pointer"
+                />
+                <div className="bg-gray-50 border-2 border-gray-300 rounded-xl p-3 text-center flex items-center justify-center gap-2">
+                  <Upload className="h-5 w-5 text-teal-700" />
+                  <span className="text-gray-700 font-medium">
+                    {signUpData.photo ? signUpData.photo.name : "Choose profile photo"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <button
               type="submit"
-              className="rounded-2xl border border-[#ff4b2b] bg-[#ff4b2b] text-white text-xs font-bold px-[45px] py-3 tracking-wide uppercase transition-transform duration-80 ease-in active:scale-95 focus:outline-none"
+              className="w-full rounded-xl bg-gradient-to-r from-teal-600 to-blue-800 text-white font-semibold px-8 py-4 tracking-wide uppercase transition-all duration-300 hover:from-teal-700 hover:to-blue-900 hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2"
             >
-              Sign Up
+              Create Account
             </button>
-            <SocialLogin />
+            <div className="w-full">
+              <SocialLogin />
+            </div>
           </form>
         </div>
 
@@ -302,54 +354,100 @@ const SignUp: React.FC = () => {
         >
           <form
             onSubmit={handleSignInSubmit}
-            className="bg-white flex items-center justify-center flex-col px-[50px] h-full text-center"
+            className="bg-white flex items-center justify-center flex-col px-12 h-full text-center space-y-6"
           >
-            <h1 className="font-bold m-0">Sign in</h1>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={signInData.email}
-              onChange={handleSignInInputChange}
-              className="bg-[#eee] border-none px-[15px] py-3 my-2 w-full"
-              required
-              disabled={isLoading}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={signInData.password}
-              onChange={handleSignInInputChange}
-              className="bg-[#eee] border-none px-[15px] py-3 my-2 w-full"
-              required
-              disabled={isLoading}
-            />
+            <h1 className="font-bold text-3xl text-gray-800 mb-2">Welcome Back</h1>
+            <p className="text-gray-600 text-sm mb-6">Sign in to your account</p>
+            
+            {/* Email Input */}
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-teal-700" />
+              </div>
+              <input
+                className="pl-10 peer/email block w-full rounded-xl border-2 border-gray-300 bg-gray-50 p-3.5 shadow-sm outline-none transition-all focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
+                type="email"
+                name="email"
+                value={signInData.email}
+                onChange={handleSignInInputChange}
+                placeholder=""
+                id="signin_email_33"
+                required
+                disabled={isLoading}
+              />
+              <label
+                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/email:top-3.5 peer-placeholder-shown/email:bg-transparent peer-placeholder-shown/email:text-sm peer-placeholder-shown/email:text-gray-500 peer-focus/email:-top-2 peer-focus/email:bg-blue-600 peer-focus/email:text-xs peer-focus/email:text-white "
+                htmlFor="signin_email_33"
+              >
+                Email Address
+              </label>
+            </div>
+
+            {/* Password Input */}
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-teal-700" />
+              </div>
+              <input
+                className="pl-10 pr-10 peer/pass block w-full rounded-xl border-2 border-gray-300 bg-gray-50 p-3.5 shadow-sm outline-none transition-all focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={signInData.password}
+                onChange={handleSignInInputChange}
+                placeholder=""
+                id="signin_password_33"
+                required
+                disabled={isLoading}
+              />
+              <label
+                className="absolute -top-2 left-8 rounded-md bg-white px-2 text-xs text-gray-700 font-medium duration-300 peer-placeholder-shown/pass:top-3.5 peer-placeholder-shown/pass:bg-transparent peer-placeholder-shown/pass:text-sm peer-placeholder-shown/pass:text-gray-500 peer-focus/pass:-top-2 peer-focus/pass:bg-blue-600 peer-focus/pass:text-xs peer-focus/pass:text-white"
+                htmlFor="signin_password_33"
+              >
+                Password
+              </label>
+              <button
+                type="button"
+                className="absolute right-3 top-3.5 text-gray-500 hover:text-teal-600 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
             {error && (
-              <div className="text-red-500 text-sm mt-2 mb-2">{error}</div>
+              <div className="w-full text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+                {error}
+              </div>
             )}
-            <a href="#" className="text-[#333] text-sm no-underline my-[15px]">
+
+            <a href="#" className="text-teal-600 text-sm no-underline hover:text-teal-700 hover:underline transition-colors">
               Forgot your password?
             </a>
             <button
               type="submit"
               disabled={isLoading}
-              className={`rounded-2xl border border-[#ff4b2b] text-white text-xs font-bold px-[45px] py-3 tracking-wide uppercase transition-transform duration-80 ease-in active:scale-95 focus:outline-none ${
+              className={`w-full rounded-xl font-semibold px-8 py-4 tracking-wide uppercase transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-[#ff4b2b] hover:bg-[#ff416c]"
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gradient-to-r from-teal-600 to-blue-800 text-white hover:from-teal-700 hover:to-blue-900 hover:shadow-lg focus:ring-teal-400"
               }`}
             >
               {isLoading ? "Signing In..." : "Sign In"}
             </button>
-            <SocialLogin />
-            <p onClick={() => toggle(false)} className="pb-4 pl-3 md:pl-8">
-              <>
-                New Here?{" "}
-                <Link className="text-red-400   hover:underline" to="/signup">
-                  Create an account
-                </Link>
-              </>
+
+            <div className="w-full">
+              <SocialLogin />
+            </div>
+
+            <p className="text-gray-700">
+              New Here?{" "}
+              <button
+                type="button"
+                onClick={() => toggle(false)}
+                className="text-teal-600 font-semibold hover:text-teal-700 hover:underline transition-colors"
+              >
+                Create an account
+              </button>
             </p>
           </form>
         </div>
@@ -361,25 +459,28 @@ const SignUp: React.FC = () => {
           }`}
         >
           <div
-            className={`bg-gradient-to-r from-[#ff4b2b] to-[#ff416c] text-white relative left-[-100%] h-full w-[200%] transform transition-transform duration-600 ease-in-out ${
+            className={`bg-gradient-to-r from-teal-600 via-blue-800 to-teal-600 text-white relative left-[-100%] h-full w-[200%] transform transition-transform duration-600 ease-in-out ${
               !signin ? "transform translate-x-1/2" : ""
             }`}
           >
             {/* Left Overlay Panel */}
             <div
-              className={`absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 transform transition-transform duration-600 ease-in-out ${
+              className={`group absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 transform transition-transform duration-600 ease-in-out ${
                 !signin
                   ? "transform translate-x-0"
                   : "transform -translate-x-1/5"
               }`}
             >
-              <h1 className="font-bold m-0">Welcome Back!</h1>
-              <p className="text-sm font-thin leading-5 tracking-wide my-5">
+              <span className="absolute -left-8 -top-8 z-20 h-32 w-32 rounded-full bg-blue-800/20 duration-500 group-hover:h-56 group-hover:w-56"></span>
+                <span className="absolute -left-5 -top-5 z-10 h-36 w-36 rounded-full bg-blue-800/50"></span>
+
+              <h1 className="font-bold text-2xl mb-4">Welcome Back!</h1>
+              <p className="text-blue-100 text-sm leading-5 tracking-wide mb-8">
                 To keep connected with us please login with your personal info
               </p>
               <button
                 onClick={() => toggle(true)}
-                className="rounded-2xl border border-white bg-transparent text-white text-xs font-bold px-[45px] py-3 tracking-wide uppercase transition-transform duration-80 ease-in active:scale-95 focus:outline-none"
+                className="rounded-xl border-2 border-white bg-transparent text-white font-semibold px-8 py-3 tracking-wide uppercase transition-all duration-300 hover:bg-white hover:text-teal-700 transform hover:-translate-y-0.5"
               >
                 Sign In
               </button>
@@ -387,19 +488,22 @@ const SignUp: React.FC = () => {
 
             {/* Right Overlay Panel */}
             <div
-              className={`absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 right-0 transform transition-transform duration-600 ease-in-out ${
+              className={`group absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 right-0 transform transition-transform duration-600 ease-in-out ${
                 !signin
                   ? "transform translate-x-1/5"
                   : "transform translate-x-0"
               }`}
             >
-              <h1 className="font-bold m-0">Hello, Friend!</h1>
-              <p className="text-sm font-thin leading-5 tracking-wide my-5">
-                Enter your personal details and start journey with us
+              <span className="absolute -right-8 -top-8 z-20 h-32 w-32 rounded-full bg-blue-800/20 duration-500 group-hover:h-56 group-hover:w-56"></span>
+                <span className="absolute -right-5 -top-5 z-10 h-36 w-36 rounded-full bg-blue-800/50"></span>
+
+              <h1 className="font-bold text-2xl mb-4">Hello, Friend!</h1>
+              <p className="text-blue-100 text-sm leading-5 tracking-wide mb-8">
+                Enter your personal details and start your sweet journey with us
               </p>
               <button
                 onClick={() => toggle(false)}
-                className="rounded-2xl border border-white bg-transparent text-white text-xs font-bold px-[45px] py-3 tracking-wide uppercase transition-transform duration-80 ease-in active:scale-95 focus:outline-none"
+                className="rounded-xl border-2 border-white bg-transparent text-white font-semibold px-8 py-3 tracking-wide uppercase transition-all duration-300 hover:bg-white hover:text-teal-900 transform hover:-translate-y-0.5"
               >
                 Sign Up
               </button>
