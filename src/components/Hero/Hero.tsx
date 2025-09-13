@@ -46,7 +46,7 @@ const Hero = () => {
               variants={SlideUp(0.5)}
               initial="hidden"
               whileInView="show"
-              className="relative text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold uppercase text-transparent"
+              className="relative text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold uppercase text-transparent font-serif md:text-6xl mb-4  italic"
               style={{ WebkitTextStroke: '3px rgb(246, 245, 246)' }}
             >
               Yummy
@@ -56,7 +56,7 @@ const Hero = () => {
               initial="hidden"
               whileInView="show"
               className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl
-                        font-bold uppercase"
+                        font-bold uppercase font-serif  md:text-6xl mb-4 italic"
             >
               Cake
             </motion.h1>

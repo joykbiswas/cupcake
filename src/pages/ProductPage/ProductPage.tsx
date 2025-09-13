@@ -49,7 +49,7 @@ const ProductPage = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl font-bold mb-4 font-leagueGothic" style={{ color: COLORS.TEXT_PRIMARY }}>
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl mb-4 font-light italic" style={{ color: COLORS.TEXT_PRIMARY }}>
             Our Delicious Cakes
           </h1>
           <p className="text-xl max-w-2xl mx-auto" style={{ color: COLORS.TEXT_SECONDARY }}>

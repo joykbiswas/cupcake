@@ -6,6 +6,8 @@ import Review from "../../components/Review/Review";
 import ProductPage from "../../pages/ProductPage";
 import { COLORS } from "../../constants/colors";
 import useAuth from "../../hooks/useAuth";
+import ProductNavigation from "../../components/ProductNavigation/ProductNavigation";
+import Newsletter from "../../components/NewsLetter/NewsLetter";
 
 
 const HomePage = () => {
@@ -25,6 +27,8 @@ const HomePage = () => {
             <Banner />
             <ProductPage />
             <Review />
+            <ProductNavigation />
+            <Newsletter />
 
         </div>
     );

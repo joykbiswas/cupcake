@@ -56,7 +56,7 @@ const Review = () => {
                     viewport={{ once: true }}
                     className="text-center mb-12"
                 >
-                    <h2 className="text-4xl font-extrabold text-gray-800">What Our Customers Say</h2>
+                    <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl mb-4 font-light italic">What Our Customers Say</h2>
                     <p className="text-gray-600 mt-2">Honest feedback from our valued clients.</p>
                 </motion.div>
                 <Swiper

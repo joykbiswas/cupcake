@@ -27,7 +27,7 @@ const Menu = () => {
                     variants={SlideUp(0)}
                     initial="hidden"
                     whileInView="show"
-                    className='text-2xl font-semibold text-secondary uppercase py-8 gradient-text-rainbow'
+                    className='font-serif text-2xl sm:text-3xl md:text-4xl mb-4  italic  font-semibold text-secondary uppercase py-8 gradient-text-rainbow'
                 >
                     Our Menu
                 </motion.h3>
