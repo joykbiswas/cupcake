@@ -60,34 +60,47 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   };
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      console.log("current user", currentUser);
+      console.log("Auth state changed. Current user:", currentUser?.email);
       if (currentUser) {
-        //get token and store client
+        // User is signed in. Get a token.
         const userInfo = { email: currentUser.email };
         try {
           const res = await axiosPublic.post("/jwt", userInfo);
           if (res.data?.token) {
             localStorage.setItem("access-token", res.data.token);
+            console.log("Token stored.");
           } else {
-            console.warn("JWT endpoint did not return token");
+            // This case is important for debugging: the backend didn't send a token.
+            console.warn("JWT endpoint did not return a token.");
+            localStorage.removeItem("access-token");
           }
         } catch (err: unknown) {
           const error = err as AxiosError;
           console.error(
-            "JWT request failed",
-            error?.response?.data || error?.message || err
+            "JWT request failed:",
+            error?.response?.data || error?.message
           );
+          // Ensure no old token is left if the request fails.
+          localStorage.removeItem("access-token");
         } finally {
+          // This block runs regardless of success or failure of the JWT request.
+          // This is the single point where we declare that authentication is resolved for a logged-in user.
+          setUser(currentUser);
           setLoading(false);
+          console.log("Auth state resolved: User is IN, loading is false.");
         }
       } else {
-        // remove token
+        // User is signed out.
         localStorage.removeItem("access-token");
+        setUser(null);
         setLoading(false);
+        console.log("Auth state resolved: User is OUT, loading is false.");
       }
     });
+
+    // Cleanup subscription on unmount
     return () => {
+      console.log("Auth provider unmounting. Cleaning up subscription.");
       return unsubscribe();
     };
   }, [axiosPublic]);

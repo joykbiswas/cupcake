@@ -68,7 +68,7 @@ export default function Navbar() {
   ];
 
   const NavbarMenu = user && isAdmin ? allNavbarMenus : allNavbarMenus.filter(item => item.title !== 'Dashboard');
-  console.log("NavbarMenu", NavbarMenu);
+  
 
   return (
     <>
