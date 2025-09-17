@@ -2,38 +2,49 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
- const axiosSecure = axios.create({
-    baseURL: 'https://cupcake-backend.vercel.app'
-})
+// create axios instance without fixed baseURL
+const axiosSecure = axios.create({
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000" // local backend, no /api
+      : "https://cupcake-backend.vercel.app/api", // deployed backend, with /api
+});
+
 const useAxiosSecure = () => {
-   const navigate = useNavigate();
-   const auth = useAuth();
-   const logOut = auth?.logOut;
-   axiosSecure.interceptors.request.use(function(config) {
-      const token = localStorage.getItem('access-token');
-      // console.log('request stop interceptor before adding token',token);
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const logOut = auth?.logOut;
+
+  // Request interceptor: add token
+  axiosSecure.interceptors.request.use(
+    function (config) {
+      const token = localStorage.getItem("access-token");
       if (token && config.headers) {
-         config.headers.authorization = `Bearer ${token}`;
+        config.headers.authorization = `Bearer ${token}`;
       }
       return config;
-   }, function (error) {
-      return Promise.reject(error)
-   })
+    },
+    function (error) {
+      return Promise.reject(error);
+    }
+  );
 
-   //intercepts 401 & 403 status
-   axiosSecure.interceptors.response.use(function(response) {
+  // Response interceptor: handle 401/403
+  axiosSecure.interceptors.response.use(
+    function (response) {
       return response;
-   }, async (error) =>{
-      const status = error.response.status;
-      // console.log('status error in the interceptor', status);
-      // for 401 or 403 logout the user and move the user to the login
-      if(status === 401 || status === 403){
-         await logOut?.();
-         navigate('/signup')
+    },
+    async function (error) {
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        await logOut?.();
+        navigate("/signup");
       }
-      return Promise.reject(error)
-   })
-   return axiosSecure;
+      return Promise.reject(error);
+    }
+  );
+
+  return axiosSecure;
 };
 
 export default useAxiosSecure;

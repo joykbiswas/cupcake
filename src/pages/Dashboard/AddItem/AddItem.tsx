@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import Select from "react-select";
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
 const steps = [
@@ -68,6 +69,7 @@ const AddItem = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  const axiosPublic = useAxiosPublic();
   // For file upload
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -110,14 +112,7 @@ const AddItem = () => {
     console.log("payload", payload);
 
     try {
-      const response = await fetch("https://cupcake-backend.vercel.app/cake", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
+      const { data } = await axiosPublic.post("/cake", payload);
       console.log("response data:", data);
 
       if (data.insertedId) {

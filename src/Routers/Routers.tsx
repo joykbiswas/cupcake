@@ -32,7 +32,6 @@ import AllPaymentHistory from "../pages/Dashboard/AllPaymentHistory/AllPaymentHi
         {
             path:'/all-product',
             element:<AllProductPage />,
-            loader: () => fetch('https://cupcake-backend.vercel.app/cake')
         },
       
         {
@@ -67,12 +66,11 @@ import AllPaymentHistory from "../pages/Dashboard/AllPaymentHistory/AllPaymentHi
         {
           path: 'products/edit/:id',
           element: <EditItem />,
-          loader: ({params}) => fetch(`https://cupcake-backend.vercel.app/cake/${params.id}`)
+          loader: ({params}) => fetch(`https://cupcake-backend.vercel.app/api/cake/${params.id}`)
         },
         {
           path: 'products/all',
           element: <AllItems />,
-          loader: () => fetch('https://cupcake-backend.vercel.app/cake')
         },
         {
           path: 'adminProfile',

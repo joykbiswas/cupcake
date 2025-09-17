@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { useState } from "react";
+import { useState, Fragment } from "react";
 
 interface Item {
   name: string;
@@ -101,9 +101,8 @@ const AllPaymentHistory = () => {
             </thead>
             <tbody>
               {payments.map((payment: Payment, index: number) => (
-                <>
+                <Fragment key={payment._id}>
                   <tr
-                    key={payment._id}
                     className="border-b hover:bg-gray-50 transition-colors cursor-pointer"
                     onClick={() => toggleRow(payment._id)}
                   >
@@ -164,7 +163,7 @@ const AllPaymentHistory = () => {
                             </thead>
                             <tbody>
                               {payment.items.map((item, idx) => (
-                                <tr key={idx} className="border-b">
+                                <tr key={`${payment._id}-item-${idx}`} className="border-b">
                                   <td className="p-2">{item.name}</td>
                                   <td className="p-2">{item.category}</td>
                                   <td className="p-2">{item.quantity}</td>
@@ -190,7 +189,7 @@ const AllPaymentHistory = () => {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>
