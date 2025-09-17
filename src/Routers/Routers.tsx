@@ -66,7 +66,7 @@ import AllPaymentHistory from "../pages/Dashboard/AllPaymentHistory/AllPaymentHi
         {
           path: 'products/edit/:id',
           element: <EditItem />,
-          loader: ({params}) => fetch(`https://cupcake-backend.vercel.app/api/cake/${params.id}`)
+          loader: ({params}) => fetch(`https://cupcake-backend.vercel.app/cake/${params.id}`)
         },
         {
           path: 'products/all',

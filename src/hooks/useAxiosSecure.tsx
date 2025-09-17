@@ -4,11 +4,8 @@ import useAuth from "./useAuth";
 
 // create axios instance without fixed baseURL
 const axiosSecure = axios.create({
-  baseURL:
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5000" // local backend, no /api
-      : "https://cupcake-backend.vercel.app/api", // deployed backend, with /api
-});
+    baseURL:'https://cupcake-backend.vercel.app'
+})
 
 const useAxiosSecure = () => {
   const navigate = useNavigate();
