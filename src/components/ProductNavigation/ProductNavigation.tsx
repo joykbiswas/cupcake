@@ -17,6 +17,7 @@ import img14 from '../../assets/products/p33.png'
 import img15 from '../../assets/products/p34.png'
 import imgH from '../../assets/products/show_divider_3_92x48.png'
 import bgHero from '../../assets/bg-hero.png';
+import useAddToCart from "../../hooks/useAddToCart";
 
 
 interface Product {
@@ -28,6 +29,8 @@ interface Product {
   vendor: string;
   imageUrl: string;
   category: string;
+  description?: string;
+  inStock?: boolean;
 }
 
 const products: Product[] = [
@@ -211,6 +214,21 @@ const getProductsByCategory = (category: string) => {
 const ProductNavigation: React.FC = () => {
   const [currentCategory, setCurrentCategory] = useState('layer-cakes');
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const { addToCart } = useAddToCart();
+
+  const handleAddToCart = (product: Product) => {
+    addToCart({
+      _id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      rating: 0,
+      category: product.type,
+      images: product.imageUrl,
+      inStock: product.inStock || true,
+      description: product.description || `${product.name} - ${product.type}`,
+      tags: []
+    });
+  };
 
   const filteredProducts = getProductsByCategory(currentCategory);
   const currentProduct = filteredProducts[currentProductIndex];
@@ -252,10 +270,10 @@ const ProductNavigation: React.FC = () => {
       </header>
 
       {/* Main Product Container */}
-      <main className="container p-4 md:p-8 flex flex-col md:flex-row items-start justify-center">
+      <main className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center md:items-start justify-center">
 
         {/* Left Sidebar */}
-        <div className="flex flex-col items-end gap-6 p-4 md:w-1/5 w-full mb-8 md:mb-0">
+        <div className="flex md:flex-col flex-row flex-wrap justify-center md:justify-start items-center md:items-end gap-4 md:gap-6 p-4 md:w-1/5 w-full mb-6 md:mb-0 overflow-x-auto">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isActive = currentCategory === cat.name;
@@ -263,17 +281,17 @@ const ProductNavigation: React.FC = () => {
               <button
                 key={cat.name}
                 onClick={() => handleSelectCategory(cat.name)}
-                className={`relative w-20 h-20 rounded-full flex items-center justify-center 
+                className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center 
                             transition-all duration-300 transform hover:scale-105
                             ${isActive ? 'bg-white shadow-lg border-2 border-pink-400' : 'bg-pink-100'}`}
               >
-                <div className={`p-4 rounded-full ${isActive ? 'bg-gradient-to-bl from-pink-400 to-teal-200' : 'bg-gradient-to-bl from-teal-100 via-[#FFFFFF] to-pink-200'} `}>
-                  <Icon size={32} className={`
+                <div className={`p-3 md:p-4 rounded-full ${isActive ? 'bg-gradient-to-bl from-pink-400 to-teal-200' : 'bg-gradient-to-bl from-teal-100 via-[#FFFFFF] to-pink-200'} `}>
+                  <Icon size={24} className={`
                     ${isActive ? 'text-pink-600' : 'text-pink-400'} 
                   `} />
                 </div>
                 {isActive && (
-                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-r-2 border-t-2 border-teal-400"></div>
+                  <div className="absolute md:right-0 md:top-1/2 bottom-0 left-1/2 transform md:-translate-y-1/2 md:translate-x-0 -translate-x-1/2 translate-y-0 w-4 h-4 bg-white rotate-45 border-r-2 border-t-2 border-teal-400"></div>
                 )}
               </button>
             );
@@ -281,15 +299,15 @@ const ProductNavigation: React.FC = () => {
         </div>
 
         {/* Product Details and Image */}
-        <div className="md:w-4/5 w-full flex flex-col md:flex-row items-center justify-center p-6  ">
+        <div className="md:w-4/5 w-full flex  md:flex-row items-center justify-center p-4 md:p-6">
           
           {/* Details Section */}
-          <div className="flex-1 flex flex-col items-start p-4 md:p-8">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-2">{currentProduct.name}</h2>
-            <div className="text-[#7C5228] font-bold text-4xl flex items-baseline">
+          <div className="flex-1 flex flex-col items-start p-4 md:p-8 w-full">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-2">{currentProduct.name}</h2>
+            <div className="text-[#7C5228] font-bold text-3xl md:text-4xl flex items-baseline">
               ${currentProduct.price.toFixed(2)}
               {currentProduct.originalPrice && (
-                <span className="ml-4 text-xl text-gray-400 line-through">${currentProduct.originalPrice.toFixed(2)}</span>
+                <span className="ml-4 text-lg md:text-xl text-gray-400 line-through">${currentProduct.originalPrice.toFixed(2)}</span>
               )}
             </div>
             {/*  */}
@@ -301,11 +319,13 @@ const ProductNavigation: React.FC = () => {
             </div>
             
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-8 ">
-              <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#7C5228] hover:bg-[#553329] text-white rounded-xl shadow-lg  transition-colors duration-300">
+            <div className="flex flex-col sm:flex-row gap-4 mt-8 w-full">
+              <button 
+                onClick={() => handleAddToCart(currentProduct)}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#7C5228] hover:bg-[#553329] text-white rounded-xl shadow-lg transition-colors duration-300"
+              >
                 <ShoppingCart size={20} /> Add to Cart
               </button>
-             
             </div>
             
             {/* Navigation Arrows */}

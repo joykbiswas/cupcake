@@ -3,11 +3,28 @@ import type { Cake } from '../../data/cakes';
 import { CakeService } from '../../services/cakeService';
 import { motion } from 'framer-motion';
 import { COLORS, COLOR_COMBINATIONS } from '../../constants/colors';
-
+import useAddToCart from "../../hooks/useAddToCart"; 
 const ProductPage = () => {
   const [cakes, setCakes] = useState<Cake[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>('all');
+  const { addToCart } = useAddToCart();
+
+  // Use the addToCart function directly from the hook
+  const handleAddToCart = (product: Cake) => {
+    // Transform the product to match the expected format for addToCart
+    addToCart({
+      _id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      rating: 0,
+      category: product.type,
+      images: product.images,
+      inStock: true,
+      description: product.description,
+      tags: []
+    });
+  };
 
   useEffect(() => {
     // Fetch cakes using the service
@@ -125,7 +142,7 @@ const ProductPage = () => {
                {/* Cake Image */}
                <div className="relative h-64 overflow-hidden">
                  <img
-                   src={cake.img}
+                   src={cake.images}
                    alt={cake.name}
                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                  />
@@ -158,6 +175,7 @@ const ProductPage = () => {
                      ${cake.price}
                    </div>
                    <button 
+                   onClick={() => handleAddToCart(cake)}
                      className="px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105"
                      style={{
                        backgroundColor: COLORS.BUTTON_PRIMARY,

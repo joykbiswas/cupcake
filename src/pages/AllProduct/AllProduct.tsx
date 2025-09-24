@@ -1,3 +1,4 @@
+// AllProductPage.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Search,
@@ -10,11 +11,7 @@ import {
 import { type Cake } from "../../types/cake";
 import { COLORS } from "../../constants/colors";
 import useMenu from "../../hooks/useMenu";
-import useAuth from "../../hooks/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-import Swal from "sweetalert2";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAddToCart from "../../hooks/useAddToCart"; // Updated import
 
 // ProductCard component moved OUTSIDE of AllProductPage
 const ProductCard: React.FC<{
@@ -131,12 +128,7 @@ const ProductCard: React.FC<{
 // Main AllProductPage component
 const AllProductPage: React.FC = () => {
   const [currentItems, isLoading] = useMenu();
-  const auth = useAuth();
-  const user = auth?.user;
-  const navigate = useNavigate();
-  const location = useLocation();
-  const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient();
+  const { addToCart } = useAddToCart(); // Using the custom hook
 
   const [products, setProducts] = useState<Cake[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -149,50 +141,7 @@ const AllProductPage: React.FC = () => {
   const [viewType, setViewType] = useState<"grid" | "list">("grid");
 
   const handleAddToCart = (product: Cake) => {
-    if (user && user.email) {
-      const cartItem = {
-        menuId: product._id,
-        email: user.email,
-        name: product.name,
-        category: product.category,
-        image: Array.isArray(product.images)
-          ? product.images[0]
-          : product.images,
-        price: product.price,
-      };
-      axiosSecure
-        .post("/cart", cartItem)
-        .then((res) => {
-          if (res.data.insertedId) {
-            Swal.fire({
-              position: "top-end",
-              icon: "success",
-              title: `${product.name} added to your cart!`,
-              showConfirmButton: false,
-              timer: 1500,
-            });
-            queryClient.invalidateQueries({ queryKey: ["cart", user.email] });
-          }
-        })
-        .catch((error) => {
-          console.error("Add to cart error:", error);
-          Swal.fire("Error", "Failed to add to cart.", "error");
-        });
-    } else {
-      Swal.fire({
-        title: "You are not Logged In",
-        text: "Please login to add to the cart?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, login!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate("/signup", { state: { from: location } });
-        }
-      });
-    }
+    addToCart(product);
   };
 
   useEffect(() => {
